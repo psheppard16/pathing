@@ -1,0 +1,3 @@
+€•Š       ŒFrameWork.SaveFiles.saveFile”ŒSaveFile”“”)}”’”}”(Œ	debugMode”‰Œ
+resolution”Œ1280x720”Œport”M'Œ
+serverName”ŒHost”ŒsmoothFrames”‰ub.
