@@ -86,7 +86,7 @@ class GameEngine:
             endTime = self.game.frameRateEngine.getTime()
             print("Time:", endTime - startTime)
         elif self.game.saveEngine.saveNumber == 0:
-            resolution = 50
+            resolution = 150
             angleResolution = 11
             advance = 0  # amount on either side of the first, so a value of one produces 3 paths
             branch = int(angleResolution / 2)

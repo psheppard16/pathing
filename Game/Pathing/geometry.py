@@ -119,25 +119,15 @@ def liesInTriangle(point, triangle):
     tPoint1 = triangle[1]
     tPoint2 = triangle[2]
 
-    # Area = 0.5 * (-tPoint1[1] * tPoint2[0] + tPoint0[1] * (-tPoint1[0] + tPoint2[0]) + tPoint0[0] * (tPoint1[1] - tPoint2[1]) + tPoint1[0] * tPoint2[1])
-    #
-    #
-    # sI = (2 * Area) * (tPoint0[1] * tPoint2[0] - tPoint0[0] * tPoint2[1] +
-    #                       (tPoint2[1] - tPoint0[1]) * point[0] + (tPoint0[0] - tPoint2[0]) * point[1])
-    # tI = (2 * Area) * (tPoint0[0] * tPoint1[1] - tPoint0[1] * tPoint1[0] +
-    #                       (tPoint0[1] - tPoint1[1]) * point[0] + (tPoint1[0] - tPoint0[0]) * point[1])
-    # if sI == 0 or tI == 0:
-    #     return False
-    #
-    # s = 1 / sI
-    # t = 1 / tI
-    #
-    # return s > 0 and t > 0 and 1 - s - t > 0
-    alpha = ((tPoint1[1] - tPoint2[1]) * (point[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (point[1] - tPoint2[1])) / ((tPoint1[1] - tPoint2[1]) * (tPoint0[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (tPoint0[1] - tPoint2[1]))
+    area = ((tPoint1[1] - tPoint2[1]) * (tPoint0[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (tPoint0[1] - tPoint2[1]))
+    if area == 0:
+        return False
 
-    beta = ((tPoint2[1] - tPoint0[1]) * (point[0] - tPoint2[0]) + (tPoint0[0] - tPoint2[0]) * (point[1] - tPoint2[1])) / ((tPoint1[1] - tPoint2[1]) * (tPoint0[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (tPoint0[1] - tPoint2[1]))
+    alpha = ((tPoint1[1] - tPoint2[1]) * (point[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (point[1] - tPoint2[1])) / area
 
-    gamma = 1 - alpha - beta;
+    beta = ((tPoint2[1] - tPoint0[1]) * (point[0] - tPoint2[0]) + (tPoint0[0] - tPoint2[0]) * (point[1] - tPoint2[1])) / area
+
+    gamma = 1 - alpha - beta
 
     return alpha > 0 and beta > 0  and gamma > 0
 
