@@ -122,7 +122,7 @@ class PathObject():
                         if geo.distanceP(pathObject.position, self.position) < tolerance:
                             toCopy = pathObject
                             copy = toCopy.copy(self, hasConnected=True, hasBranched=True, hasAdvanced=True, hasBacktracked=True)
-                            while copy and not copy.hasBeenEliminated:
+                            while copy and not copy.hasBeenEliminated and toCopy.creator:
                                 toCopy = pathObject.creator
                                 copy = toCopy.copy(copy, hasConnected=True, hasBranched=True, hasAdvanced=True, hasBacktracked=True)
 
@@ -202,7 +202,7 @@ class PathObject():
         if not self.hasBeenEliminated:
             pointToCheck = self.creator
             while pointToCheck.creator:
-                if geo.distanceP(self.position, pointToCheck.position) < tolerance and not self.hasFinished:
+                if geo.distanceP(self.position, pointToCheck.position) < tolerance and not self.hasFinished and not self.hasConnected:
                     self.eliminate()
                     break
                 pointToCheck = pointToCheck.creator
@@ -211,7 +211,7 @@ class PathObject():
         if not self.hasBeenEliminated:
             objectsToEliminate = []
             for pathObject in self.pathObjectList:
-                if pathObject != self:
+                if pathObject != self and self.creator != pathObject:
                     if geo.distanceP(self.position, pathObject.position) < tolerance:
                         length1 = self.getPromisedLength()
                         length2 = pathObject.getPromisedLength()

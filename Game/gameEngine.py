@@ -42,22 +42,6 @@ class GameEngine:
             wallList = mazeGenerator.generateSquareMaze(16, 9, (self.game.window.height - self.indent) / 9)
             for wall in wallList:
                 self.wallList.append(((self.indent / 2 + wall[0][0], self.indent / 2 + wall[0][1]), (self.indent / 2 + wall[1][0], self.indent / 2 + wall[1][1])))
-            for wall1 in self.wallList: #remove duplicate walls
-                duplicate = False
-                for wall2 in self.wallList:
-                    if wall1 == wall2:
-                        if duplicate:
-                            self.wallList.remove(wall2)
-                        else:
-                            duplicate = True
-            for wall1 in self.wallList: #remove duplicate walls
-                duplicate = False
-                for wall2 in self.wallList:
-                    if wall1 == wall2:
-                        if duplicate:
-                            self.wallList.remove(wall2)
-                        else:
-                            duplicate = True
         else:
             for i in range(5):
                 x1 = random.randint(0, 1000)
