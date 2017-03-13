@@ -26,7 +26,7 @@
       <file leaf-file-name="path.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Game/Pathing/path.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2684">
+            <state relative-caret-position="1449">
               <caret line="124" column="88" selection-start-line="124" selection-start-column="88" selection-end-line="124" selection-end-column="88" />
               <folding />
             </state>
@@ -43,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pathing.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="pathing.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Game/Pathing/pathing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+            <state relative-caret-position="219">
+              <caret line="59" column="4" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="4" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
                 <element signature="e#241#1805#0" expanded="false" />
@@ -56,7 +56,6 @@
                 <element signature="e#1513#1650#0" expanded="false" />
                 <element signature="e#1551#1650#0" expanded="false" />
                 <element signature="e#1677#1776#0" expanded="false" />
-                <element signature="e#1872#1961#0" expanded="false" />
                 <element signature="e#2033#4050#0" expanded="false" />
                 <element signature="e#2181#2651#0" expanded="false" />
                 <element signature="e#2261#2651#0" expanded="false" />
@@ -121,7 +120,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="geometry.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="geometry.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Game/Pathing/geometry.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="198">
@@ -134,8 +133,8 @@
       <file leaf-file-name="gameEngine.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Game/gameEngine.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="89">
-              <caret line="88" column="28" selection-start-line="88" selection-start-column="28" selection-end-line="88" selection-end-column="28" />
+            <state relative-caret-position="1826">
+              <caret line="88" column="27" selection-start-line="88" selection-start-column="27" selection-end-line="88" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -205,10 +204,10 @@
         <option value="$PROJECT_DIR$/Game/Maze/mazeGenerator.py" />
         <option value="$PROJECT_DIR$/Game/drawingEngine.py" />
         <option value="$PROJECT_DIR$/Game/Pathing/wall.py" />
+        <option value="$PROJECT_DIR$/Game/Pathing/geometry.py" />
+        <option value="$PROJECT_DIR$/Game/gameEngine.py" />
         <option value="$PROJECT_DIR$/Game/Pathing/pathing.py" />
         <option value="$PROJECT_DIR$/Game/Pathing/path.py" />
-        <option value="$PROJECT_DIR$/Game/gameEngine.py" />
-        <option value="$PROJECT_DIR$/Game/Pathing/geometry.py" />
       </list>
     </option>
   </component>
@@ -546,7 +545,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26706588" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26697892" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -817,6 +816,22 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Game/Pathing/wall.py" />
+    <entry file="file://$PROJECT_DIR$/Game/Pathing/geometry.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="121" column="122" selection-start-line="121" selection-start-column="122" selection-end-line="121" selection-end-column="122" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Game/gameEngine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1826">
+          <caret line="88" column="27" selection-start-line="88" selection-start-column="27" selection-end-line="88" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Game/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
@@ -825,10 +840,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Game/Pathing/path.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1449">
+          <caret line="124" column="88" selection-start-line="124" selection-start-column="88" selection-end-line="124" selection-end-column="88" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Game/Pathing/pathing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+        <state relative-caret-position="219">
+          <caret line="59" column="4" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="4" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
             <element signature="e#241#1805#0" expanded="false" />
@@ -837,7 +860,6 @@
             <element signature="e#1513#1650#0" expanded="false" />
             <element signature="e#1551#1650#0" expanded="false" />
             <element signature="e#1677#1776#0" expanded="false" />
-            <element signature="e#1872#1961#0" expanded="false" />
             <element signature="e#2033#4050#0" expanded="false" />
             <element signature="e#2181#2651#0" expanded="false" />
             <element signature="e#2261#2651#0" expanded="false" />
@@ -898,30 +920,6 @@
             <element signature="e#9246#9438#0" expanded="false" />
             <element signature="e#9359#9438#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game/Pathing/path.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2684">
-          <caret line="124" column="88" selection-start-line="124" selection-start-column="88" selection-end-line="124" selection-end-column="88" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game/gameEngine.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="89">
-          <caret line="88" column="28" selection-start-line="88" selection-start-column="28" selection-end-line="88" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game/Pathing/geometry.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="121" column="122" selection-start-line="121" selection-start-column="122" selection-end-line="121" selection-end-column="122" />
-          <folding />
         </state>
       </provider>
     </entry>

@@ -10,7 +10,7 @@ class GameEngine:
         self.startPoint = (50, 50)
         self.endPoint = (825, 500)
         self.wallList = []
-        if True:
+        if False:
             wall = ((150, 300), (300, 150))
             self.wallList.append(wall)
             wall = ((300, 150), (400, 150))
@@ -86,7 +86,7 @@ class GameEngine:
             endTime = self.game.frameRateEngine.getTime()
             print("Time:", endTime - startTime)
         elif self.game.saveEngine.saveNumber == 0:
-            resolution = 150
+            resolution = 50
             angleResolution = 11
             advance = 0  # amount on either side of the first, so a value of one produces 3 paths
             branch = int(angleResolution / 2)
