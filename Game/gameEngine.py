@@ -1,6 +1,6 @@
+__author__ = 'Preston Sheppard'
 import math
 import random
-import time as tm
 import Game.Pathing.pathing as pathing
 import Game.Pathing.wall as wallClass
 import Game.Maze.mazeGenerator as mazeGenerator

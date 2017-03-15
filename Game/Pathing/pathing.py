@@ -1,3 +1,4 @@
+__author__ = 'Preston Sheppard'
 import Game.Pathing.wall as wallClass
 from Game.Pathing.path import PathObject
 import math
@@ -20,9 +21,6 @@ def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
     sets = []
     global setsG
     setsG = sets
-
-    global toleranceG
-    toleranceG = tolerance
 
     wallClass.reset()
     wallClass.generateWalls(wallList)

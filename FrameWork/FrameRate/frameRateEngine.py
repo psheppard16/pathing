@@ -1,4 +1,4 @@
-__author__ = 'psheppard16'
+__author__ = 'Preston Sheppard'
 import time
 from FrameWork.FrameRate.task import Task
 class FrameRateEngine:

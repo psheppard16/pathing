@@ -1,4 +1,4 @@
-__author__ = 'psheppard16'
+__author__ = 'Preston Sheppard'
 from FrameWork.Screens.screenEngine import ScreenEngine
 from FrameWork.FrameRate.frameRateEngine import FrameRateEngine
 from FrameWork.SaveFiles.saveEngine import SaveEngine

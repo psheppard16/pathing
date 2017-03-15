@@ -1,4 +1,4 @@
-__author__ = 'python'
+__author__ = 'Preston Sheppard'
 from Game.gameEngine import GameEngine
 from FrameWork.Screens.screen import Screen
 from FrameWork.Screens.options import Options

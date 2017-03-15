@@ -1,4 +1,4 @@
-__author__ = 'psheppard16'
+__author__ = 'Preston Sheppard'
 from tkinter import *
 from FrameWork.Screens.screen import Screen
 class StartScreen(Screen):

@@ -1,4 +1,4 @@
-__author__ = 'python'
+__author__ = 'Preston Sheppard'
 from tkinter import *
 from PIL import ImageTk
 class Screen:

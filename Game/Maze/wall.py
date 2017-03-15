@@ -1,4 +1,4 @@
-__author__ = 'psheppard16'
+__author__ = 'Preston Sheppard'
 import math
 class Wall:
     def __init__(self, x1, y1, x2, y2):

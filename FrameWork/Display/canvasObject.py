@@ -1,3 +1,4 @@
+__author__ = 'Preston Sheppard'
 import math
 from PIL import Image, ImageTk
 import PIL

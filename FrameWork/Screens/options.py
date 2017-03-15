@@ -1,3 +1,4 @@
+__author__ = 'Preston Sheppard'
 from tkinter import *
 from FrameWork.Screens.screen import Screen
 class Options(Screen):

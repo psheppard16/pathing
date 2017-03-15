@@ -1,4 +1,4 @@
-__author__ = 'psheppard16'
+__author__ = 'Preston Sheppard'
 class SaveFile:
     def __init__(self):
         self.resolution = "1280x720"

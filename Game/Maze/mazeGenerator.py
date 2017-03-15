@@ -1,3 +1,4 @@
+__author__ = 'Preston Sheppard'
 from Game.Maze.gridSquare import GridSquare
 import Game.Maze.gridSquare as gs
 
