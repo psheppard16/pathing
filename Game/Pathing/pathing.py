@@ -58,6 +58,7 @@ def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
 
 def run(sets, resolution, angleResolution, advance, branch):
     reducePaths(sets)
+    prunePaths(sets)
     return addPaths(sets, resolution, angleResolution, advance, branch)
 
 def addPaths(sets, resolution, angleResolution, advance, branch):
@@ -157,6 +158,11 @@ def reducePaths(sets):
         for pathObject in pathObjectList:
             pathObject.reduce()
 
+def prunePaths(sets):
+    for pathObjectList in sets:
+        for pathObject in pathObjectList:
+            pathObject.prune()
+
 def generateMap(wallList, startPoint, xMin, yMin, xMax, yMax, step=10):
     finalPaths = []
     for x in range(int(xMin / step) + 1, int(xMax / step)):
@@ -189,7 +195,7 @@ def getShortestPath(sets):
     return shortestPath
 
 def createStartingPoints(startPoint, endPoint, sets, tolerance):
-    PathObject(startPoint[0], startPoint[1], None, sets=sets, tolerance=tolerance, targetPoint=endPoint)
+    PathObject(startPoint[0], startPoint[1], None, sets=sets, tolerance=tolerance, targetPoint=endPoint, hasAdvanced=True, hasBranched=True, hasBacktracked=True)
     PathObject(endPoint[0], endPoint[1], None, sets=sets, tolerance=tolerance, targetPoint=startPoint)
 
 def getUnadvancedPaths(sets):

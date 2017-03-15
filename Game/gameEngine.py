@@ -8,9 +8,9 @@ class GameEngine:
     def __init__(self, game):
         self.game = game
         self.startPoint = (50, 50)
-        self.endPoint = (825, 500)
+        self.endPoint = (100, 500)
         self.wallList = []
-        if False:
+        if True:
             wall = ((150, 300), (300, 150))
             self.wallList.append(wall)
             wall = ((300, 150), (400, 150))
@@ -71,7 +71,7 @@ class GameEngine:
     def run(self):
         if self.game.saveEngine.saveNumber == 1:
             startTime = self.game.frameRateEngine.getTime()
-            pathing.findPath(self.startPoint, self.endPoint, self.wallList)
+            pathing.findPath(self.startPoint, self.endPoint, self.wallList, resolution=100)
             mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
             if mouseX > self.game.window.width - self.indent - 1:
                 mouseX = self.game.window.width - self.indent - 1
@@ -86,7 +86,7 @@ class GameEngine:
             endTime = self.game.frameRateEngine.getTime()
             print("Time:", endTime - startTime)
         elif self.game.saveEngine.saveNumber == 0:
-            resolution = 50
+            resolution = 100
             angleResolution = 11
             advance = 0  # amount on either side of the first, so a value of one produces 3 paths
             branch = int(angleResolution / 2)

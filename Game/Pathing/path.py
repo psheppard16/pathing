@@ -77,7 +77,7 @@ class PathObject():
                     blockingWalls = {}
                     lengths = {}
 
-                    while intersectedWalls: #generate blocking walls kosherly maybe
+                    while intersectedWalls: #doe snot generate blocking walls kosherly
                         wall = intersectedWalls.pop(0)
                         for point in wall.line:
                             if point not in blockingWalls and geo.liesInTriangle(point, (point1, point2, point3)):
@@ -89,17 +89,16 @@ class PathObject():
                         anchorPoint = min(lengths, key=lengths.get)
                         connectedWalls = blockingWalls.pop(anchorPoint)
                         lengths.pop(anchorPoint)
-                        if anchorPoint != self.creator.anchorPoint:
-                            snapPoints = geo.getSnapPoints(connectedWalls, anchorPoint, self.position)
-                            for snapPoint in snapPoints:
-                                valid = True
-                                for wall in connectedWalls:
-                                    if wall.intersects((point1, snapPoint)) or wall.intersects((snapPoint, point3)):
-                                        valid = False
-                                if valid:
-                                    new = PathObject(snapPoint[0], snapPoint[1], self.creator.creator, anchorPoint=anchorPoint)
-                                    if new and not new.hasBeenEliminated:
-                                        self.creator.graft(new, includeSelf=False)
+                        snapPoints = geo.getSnapPoints(connectedWalls, anchorPoint, self.position)
+                        for snapPoint in snapPoints:
+                            valid = True
+                            for wall in connectedWalls:
+                                if wall.intersects((point1, snapPoint)) or wall.intersects((snapPoint, point3)):
+                                    valid = False
+                            if valid:
+                                new = PathObject(snapPoint[0], snapPoint[1], self.creator.creator, anchorPoint=anchorPoint)
+                                if new and not new.hasBeenEliminated:
+                                    self.creator.graft(new, includeSelf=False)
 
     def getLength(self):
         length = 0
@@ -125,6 +124,10 @@ class PathObject():
                             while copy and not copy.hasBeenEliminated and toCopy.creator:
                                 toCopy = pathObject.creator
                                 copy = toCopy.copy(copy, hasConnected=True, hasBranched=True, hasAdvanced=True, hasBacktracked=True)
+                            if copy and not copy.hasBeenEliminated:
+                                self.hasAdvanced = True
+                                self.hasBranched = True
+                                self.hasBacktracked = True
 
     def advance(self, resolution, angleResolution, advance):
         if self.hasAdvanced:
@@ -202,7 +205,7 @@ class PathObject():
         if not self.hasBeenEliminated:
             pointToCheck = self.creator
             while pointToCheck.creator:
-                if geo.distanceP(self.position, pointToCheck.position) < tolerance and not self.hasFinished and not self.hasConnected:
+                if geo.lineToPoint((pointToCheck.position, pointToCheck.creator.position), self.position) < tolerance and not self.hasFinished and not self.hasConnected:
                     self.eliminate()
                     break
                 pointToCheck = pointToCheck.creator
@@ -213,40 +216,48 @@ class PathObject():
             for pathObject in self.pathObjectList:
                 if pathObject != self and self.creator != pathObject:
                     if geo.distanceP(self.position, pathObject.position) < tolerance:
-                        length1 = self.getPromisedLength()
-                        length2 = pathObject.getPromisedLength()
-                        if self.anchorPoint and pathObject.anchorPoint:
-                            pass
-                            if pathObject.anchorPoint == self.anchorPoint:
-                                if length1 >= length2:
-                                    reachable = True
-                                    for wall in WallObject.wallList:
-                                        if wall.intersects((self.position, pathObject.position)):
-                                            reachable = False
-                                            break
-                                    if reachable:
-                                        self.eliminate()
-                                        break  # break so path doesnt delete itself twice
-                                if length1 < length2:
-                                    objectsToEliminate.append(pathObject)
-                        elif not self.anchorPoint and not pathObject.anchorPoint:
-                            if length1 >= length2:
-                                self.eliminate()
+                        reachable = True
+                        for wall in WallObject.wallList:
+                            if wall.intersects((self.position, pathObject.position)):
+                                reachable = False
                                 break
-                            if length1 < length2 and not self.creator.hasBacktracked:   # only delete existing objects if path isnt a backtrack
-                                objectsToEliminate.append(pathObject)                   # this avoids overwriting identical paths after all paths
+                        if reachable:
+                            length1 = self.getPromisedLength()
+                            length2 = pathObject.getPromisedLength()
+                            if self.anchorPoint and pathObject.anchorPoint:
+                                if pathObject.anchorPoint == self.anchorPoint:
+                                    if length1 >= length2:
+                                            self.eliminate()
+                                            break  # break so path doesnt delete itself twice
+                                    if length1 < length2:
+                                        objectsToEliminate.append(pathObject)
+                            elif not self.anchorPoint and not pathObject.anchorPoint:
+                                if length1 >= length2:
+                                    self.eliminate()
+                                    break
+                                if length1 < length2 and not self.creator.hasBacktracked:   # only delete existing objects if path isnt a backtrack
+                                    objectsToEliminate.append(pathObject)                   # this avoids overwriting identical paths after all paths
                                                                                         # are almost resolved
 
             if not self.hasBeenEliminated and objectsToEliminate:
                 while objectsToEliminate:  # delete objects after to avoid iterating while deleting
-                    pathObject = objectsToEliminate.pop()
-                    reachable = True
-                    for wall in WallObject.wallList:
-                        if wall.intersects((self.position, pathObject.position)):
-                            reachable = False
+                    objectsToEliminate.pop().eliminate()
+
+    def prune(self):
+        if not self.hasBeenEliminated and self.creator and not self.anchorPoint:
+            left = False
+            right = False
+            for pathObject in self.pathObjectList:
+                if pathObject != self and pathObject.creator == self.creator:
+                    if geo.lineToPoint((pathObject.position, pathObject.creator.position), self.position) < self.tolerance:
+                        if geo.ang((self.creator.position, self.position), (pathObject.creator.position, pathObject.position)) < 0:
+                            left = True
+                        else:
+                            right = True
+                        if left and right:
+                            self.eliminate()
                             break
-                    if reachable:
-                        pathObject.eliminate()
+
 
     def finishPath(self, tolerance):
         if self.hasFinished:
