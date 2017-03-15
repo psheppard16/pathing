@@ -2,28 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="494ef314-49e4-4ace-813b-8639ed9fcae4" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Game/GameObjects/gameObject.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Display/canvasObject.py" afterPath="$PROJECT_DIR$/FrameWork/Display/canvasObject.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/FrameRate/frameRateEngine.py" afterPath="$PROJECT_DIR$/FrameWork/FrameRate/frameRateEngine.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/FrameRate/task.py" afterPath="$PROJECT_DIR$/FrameWork/FrameRate/task.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/SaveFiles/saveEngine.py" afterPath="$PROJECT_DIR$/FrameWork/SaveFiles/saveEngine.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/SaveFiles/saveFile.py" afterPath="$PROJECT_DIR$/FrameWork/SaveFiles/saveFile.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Screens/instructions.py" afterPath="$PROJECT_DIR$/FrameWork/Screens/instructions.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Screens/mainMenu.py" afterPath="$PROJECT_DIR$/FrameWork/Screens/mainMenu.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Screens/options.py" afterPath="$PROJECT_DIR$/FrameWork/Screens/options.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Screens/saveScreen.py" afterPath="$PROJECT_DIR$/FrameWork/Screens/saveScreen.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Screens/screen.py" afterPath="$PROJECT_DIR$/FrameWork/Screens/screen.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Screens/screenEngine.py" afterPath="$PROJECT_DIR$/FrameWork/Screens/screenEngine.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Screens/startScreen.py" afterPath="$PROJECT_DIR$/FrameWork/Screens/startScreen.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/Window/window.py" afterPath="$PROJECT_DIR$/FrameWork/Window/window.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FrameWork/game.py" afterPath="$PROJECT_DIR$/FrameWork/game.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game/Maze/mazeGenerator.py" afterPath="$PROJECT_DIR$/Game/Maze/mazeGenerator.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game/Maze/wall.py" afterPath="$PROJECT_DIR$/Game/Maze/wall.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game/Pathing/pathing.py" afterPath="$PROJECT_DIR$/Game/Pathing/pathing.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game/drawingEngine.py" afterPath="$PROJECT_DIR$/Game/drawingEngine.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game/gameEngine.py" afterPath="$PROJECT_DIR$/Game/gameEngine.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Game/main.py" afterPath="$PROJECT_DIR$/Game/main.py" />
     </list>
     <ignored path="RedChase.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,114 +21,7 @@
     <favorites_list name="RedChase" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="screenEngine.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FrameWork/Screens/screenEngine.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="startScreen.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FrameWork/Screens/startScreen.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="window.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FrameWork/Window/window.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gameEngine.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Game/gameEngine.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding>
-                <element signature="e#32#43#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="game.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FrameWork/game.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gridSquare.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game/Maze/gridSquare.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mazeGenerator.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game/Maze/mazeGenerator.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding>
-                <element signature="e#32#75#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="wall.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game/Maze/wall.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="drawingEngine.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game/drawingEngine.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="31" />
-              <folding>
-                <element signature="e#32#87#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -201,7 +73,6 @@
         <option value="$PROJECT_DIR$/FrameWork/SaveFiles/saveFile2" />
         <option value="$PROJECT_DIR$/Game/drawingEngine.py" />
         <option value="$PROJECT_DIR$/Game/Pathing/pathing.py" />
-        <option value="$PROJECT_DIR$/FrameWork/Display/canvasObject.py" />
         <option value="$PROJECT_DIR$/FrameWork/FrameRate/frameRateEngine.py" />
         <option value="$PROJECT_DIR$/FrameWork/FrameRate/task.py" />
         <option value="$PROJECT_DIR$/FrameWork/SaveFiles/saveEngine.py" />
@@ -211,15 +82,16 @@
         <option value="$PROJECT_DIR$/FrameWork/Screens/options.py" />
         <option value="$PROJECT_DIR$/FrameWork/Screens/saveScreen.py" />
         <option value="$PROJECT_DIR$/FrameWork/Screens/screen.py" />
-        <option value="$PROJECT_DIR$/FrameWork/Screens/screenEngine.py" />
         <option value="$PROJECT_DIR$/FrameWork/Screens/startScreen.py" />
         <option value="$PROJECT_DIR$/FrameWork/Window/window.py" />
-        <option value="$PROJECT_DIR$/FrameWork/game.py" />
         <option value="$PROJECT_DIR$/Game/GameObjects/gameObject.py" />
         <option value="$PROJECT_DIR$/Game/Maze/mazeGenerator.py" />
         <option value="$PROJECT_DIR$/Game/Maze/wall.py" />
         <option value="$PROJECT_DIR$/Game/gameEngine.py" />
         <option value="$PROJECT_DIR$/Game/main.py" />
+        <option value="$PROJECT_DIR$/FrameWork/Display/canvasObject.py" />
+        <option value="$PROJECT_DIR$/FrameWork/Screens/screenEngine.py" />
+        <option value="$PROJECT_DIR$/FrameWork/game.py" />
       </list>
     </option>
   </component>
@@ -276,6 +148,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -326,118 +200,12 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FrameWork" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FrameWork" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Window" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FrameWork" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Screens" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FrameWork" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SaveFiles" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FrameWork" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FrameRate" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pathing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FrameWork" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Display" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../stock-game" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="recentsLimit" value="5" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
@@ -654,14 +422,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="291" y="1" width="1612" height="965" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1693852" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1693852" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3063263" sideWeight="0.5058055" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33695653" sideWeight="0.49419448" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33695653" sideWeight="0.49419448" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -829,25 +597,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
           <caret line="179" column="0" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FrameWork/SaveFiles/saveFile0.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/FrameWork/SaveFiles/saveFile0.txt" />
     <entry file="file://$PROJECT_DIR$/Game/Pathing/geometry.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="41">
           <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
-          <folding>
-            <element signature="e#47#613#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -855,7 +612,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -863,7 +619,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -871,7 +626,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -879,7 +633,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="172">
           <caret line="2138" column="0" selection-start-line="2138" selection-start-column="0" selection-end-line="2138" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -887,19 +640,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding>
-            <element signature="e#32#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FrameWork/Display/canvasObject.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding>
-            <element signature="e#32#43#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -907,7 +647,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -915,9 +654,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding>
-            <element signature="e#32#45#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -925,7 +661,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -933,9 +668,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-198">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding>
-            <element signature="e#32#53#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -943,7 +675,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -951,9 +682,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding>
-            <element signature="e#32#53#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -961,7 +689,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -977,13 +704,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding>
-            <element signature="e#32#53#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FrameWork/Screens/screenEngine.py">
+    <entry file="file://$PROJECT_DIR$/FrameWork/Screens/startScreen.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
@@ -991,7 +715,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FrameWork/Screens/startScreen.py">
+    <entry file="file://$PROJECT_DIR$/Game/GameObjects/gameObject.py" />
+    <entry file="file://$PROJECT_DIR$/FrameWork/Display/canvasObject.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22">
+          <caret line="11" column="43" selection-start-line="11" selection-start-column="43" selection-end-line="12" selection-end-column="50" />
+          <folding>
+            <element signature="e#32#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FrameWork/Screens/screenEngine.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22">
+          <caret line="7" column="53" selection-start-line="7" selection-start-column="53" selection-end-line="8" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Game/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
@@ -1007,18 +750,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FrameWork/game.py">
+    <entry file="file://$PROJECT_DIR$/Game/gameEngine.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding />
+        <state relative-caret-position="110">
+          <caret line="5" column="47" selection-start-line="5" selection-start-column="47" selection-end-line="5" selection-end-column="47" />
+          <folding>
+            <element signature="e#32#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Game/GameObjects/gameObject.py">
+    <entry file="file://$PROJECT_DIR$/FrameWork/game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+        <state relative-caret-position="22">
+          <caret line="6" column="44" selection-start-line="6" selection-start-column="44" selection-end-line="7" selection-end-column="50" />
           <folding />
         </state>
       </provider>
@@ -1049,30 +794,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Game/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Game/drawingEngine.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="31" />
           <folding>
             <element signature="e#32#87#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game/gameEngine.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding>
-            <element signature="e#32#43#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -1,4 +1,4 @@
-__author__ = 'Preston Sheppard'
+__author__ = 'psheppard16'
 import tkinter
 class Window:
     def __init__(self, game):
@@ -9,7 +9,7 @@ class Window:
 
         #setting up the default settings for window
         self.root = tkinter.Tk()
-        self.root.title("Red Shooter")
+        self.root.title("Game")
         self.root.geometry("1280x720")
         self.root.resizable(False, False)
         self.root.bind_all('<KeyPress>', self.keyPressed)
@@ -49,10 +49,7 @@ class Window:
         '''
         if event.keysym == "Escape":
             self.root.destroy()
-        try:
-            self.game.gameEngine.keyPressed(event)
-        except AttributeError:
-            pass
+        self.game.gameEngine.keyPressed(event)
 
     def keyReleased(self, event):
         '''
@@ -60,7 +57,4 @@ class Window:
         :param event: the event object
         :return: None
         '''
-        try:
-            self.game.gameEngine.keyReleased(event)
-        except AttributeError:
-            pass
+        self.game.gameEngine.keyReleased(event)

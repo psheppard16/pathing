@@ -1,4 +1,4 @@
-__author__ = 'Preston Sheppard'
+__author__ = 'python'
 import pickle
 from FrameWork.SaveFiles.saveFile import SaveFile
 class SaveEngine:

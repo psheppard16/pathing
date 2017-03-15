@@ -1,4 +1,4 @@
-__author__ = 'Preston Sheppard'
+__author__ = 'psheppard16'
 from FrameWork.Screens.screenEngine import ScreenEngine
 from FrameWork.FrameRate.frameRateEngine import FrameRateEngine
 from FrameWork.SaveFiles.saveEngine import SaveEngine
@@ -13,7 +13,7 @@ class Game:
         #do not remove anything
         self.window = Window(self)
         self.frameRateEngine = FrameRateEngine(self)
-        self.gameEngine = None
+        self.gameEngine = GameEngine(self)
         self.drawingEngine = DrawingEngine(self)
         self.saveEngine = SaveEngine()
         self.screenEngine = ScreenEngine(self)
