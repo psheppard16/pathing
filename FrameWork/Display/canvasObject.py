@@ -1,3 +1,4 @@
+__author__ = 'Preston Sheppard'
 import math
 from PIL import Image, ImageTk
 import PIL
@@ -18,7 +19,7 @@ class CanvasObject(Screen, metaclass=ABCMeta):
     def __init__(self, game):
         super().__init__(game, "gameEngine")
         os.environ['SDL_WINDOWID'] = str(self.f.winfo_id())
-        if False:# platform.system() == "Windows":
+        if platform.system() == "Windows":
             os.environ['SDL_VIDEODRIVER'] = 'windib'
             self.usePygame = True
             self.display = pygame.display.set_mode((self.game.window.width, self.game.window.height))
@@ -185,8 +186,8 @@ class CanvasObject(Screen, metaclass=ABCMeta):
             if self.usePygame:
                 pygame.draw.line(self.display, color, (x1, y1), (x2, y2), int(width))
                 if rounded:
-                    pygame.draw.circle(self.diplay, color, (x2, y2), width / 2)
-                    pygame.draw.circle(self.diplay, color, position2, width / 2)
+                    pygame.draw.circle(self.diplay, color, (x1, y1), int(width / 2))
+                    pygame.draw.circle(self.diplay, color, (x2, y2), int(width / 2))
             else:
                 tk_rgb = "#%02x%02x%02x" % color
                 self.canvas.create_line(x1, y1, x2, y2, fill=tk_rgb, width=int(width))
@@ -486,8 +487,8 @@ class CanvasObject(Screen, metaclass=ABCMeta):
         """
 
         if shiftPosition:
-            width = self.getScreenX(width) - self.getScreenX(0)
-            radius = self.getScreenX(radius) - self.getScreenX(0)
+            width = int(self.getScreenX(width) - self.getScreenX(0))
+            radius = int(self.getScreenX(radius) - self.getScreenX(0)) + 1
             x = int(self.getScreenX(position[0]))
             y = int(self.getScreenY(position[1]))
         else:
@@ -507,21 +508,18 @@ class CanvasObject(Screen, metaclass=ABCMeta):
             show = False
 
         if show:
-            try:
-                if self.usePygame:
-                    pygame.draw.circle(self.display, color, (x, y), radius)
-                    if int(width) != 0:
-                        pygame.draw.circle(self.display, secondaryColor, (x, y), radius, width)
+            if self.usePygame:
+                pygame.draw.circle(self.display, color, (x, y), radius)
+                if int(width) != 0:
+                    pygame.draw.circle(self.display, secondaryColor, (x, y), radius, width)
+            else:
+                tk_rgb = "#%02x%02x%02x" % color
+                if width:
+                    secondary_tk_rgb = "#%02x%02x%02x" % secondaryColor
                 else:
-                    tk_rgb = "#%02x%02x%02x" % color
-                    if width:
-                        secondary_tk_rgb = "#%02x%02x%02x" % secondaryColor
-                    else:
-                        secondary_tk_rgb = ""
-                    self.canvas.create_oval(x - radius, y - radius,
-                                            x + radius, y + radius, fill=tk_rgb, width=width, outline=secondary_tk_rgb)
-            except ValueError:
-                pass
+                    secondary_tk_rgb = ""
+                self.canvas.create_oval(x - radius, y - radius,
+                                        x + radius, y + radius, fill=tk_rgb, width=width, outline=secondary_tk_rgb)
 
     def setBackgroundColor(self, color):
         """

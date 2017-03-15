@@ -1,4 +1,4 @@
-__author__ = 'python'
+__author__ = 'Preston Sheppard'
 class Task:
     def __init__(self, taskName, startTime):
         self.taskName = taskName

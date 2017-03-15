@@ -16,6 +16,7 @@ class GameEngine:
         self.branch = int(self.angleResolution / 2)
         self.tolerance = math.sin(math.pi / self.angleResolution) * self.resolution * 2 - 1
 
+        self.indent = 20
 
         if self.game.saveEngine.save.wallType == "basic":
             wall = ((150, 300), (300, 150))
@@ -35,7 +36,6 @@ class GameEngine:
             wall = ((800, 300), (500, 300))
             self.wallList.append(wall)
 
-            self.indent = 10
             wall = ((self.indent, self.indent), (self.game.window.width - self.indent, self.indent)) #these walls bound the screen
             self.wallList.append(wall)
             wall = ((self.game.window.width - self.indent, self.indent), (self.game.window.width - self.indent, self.game.window.height - self.indent))
@@ -45,7 +45,6 @@ class GameEngine:
             wall = ((self.indent, self.game.window.height - self.indent), (self.indent, self.indent))
             self.wallList.append(wall)
         elif self.game.saveEngine.save.wallType == "maze":
-            self.indent = 20
             wallList = mazeGenerator.generateSquareMaze(16, 9, (self.game.window.height - self.indent) / 9)
             for wall in wallList:
                 self.wallList.append(((self.indent / 2 + wall[0][0], self.indent / 2 + wall[0][1]), (self.indent / 2 + wall[1][0], self.indent / 2 + wall[1][1])))

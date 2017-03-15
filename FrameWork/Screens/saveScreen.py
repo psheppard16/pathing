@@ -1,15 +1,19 @@
+__author__ = 'Preston Sheppard'
 from tkinter import *
 from FrameWork.Screens.screen import Screen
 class SaveScreen(Screen):
     def __init__(self, game):
         super().__init__(game, "saveScreen")
-        self.save1B = Button(self.game.window.root, text="Save file 1", command=self.save1, bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
+        self.save1B = Button(self.game.window.root, text="Debug", command=self.save1,
+                             bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
         self.save1B.pack(in_=self.f, pady=25)
 
-        self.save2B = Button(self.game.window.root, text="save file 2", command=self.save2, bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
+        self.save2B = Button(self.game.window.root, text="Final path", command=self.save2,
+                             bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
         self.save2B.pack(in_=self.f, pady=25)
 
-        self.save3B = Button(self.game.window.root, text="save file 3", command=self.save3, bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
+        self.save3B = Button(self.game.window.root, text="Generate map", command=self.save3,
+                             bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
         self.save3B.pack(in_=self.f, pady=25)
 
         self.resetB = Button(self.game.window.root, text="reset saves", command=self.resetSaves, bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)

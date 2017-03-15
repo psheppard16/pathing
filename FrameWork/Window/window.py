@@ -1,4 +1,4 @@
-__author__ = 'psheppard16'
+__author__ = 'Preston Sheppard'
 import tkinter
 class Window:
     def __init__(self, game):

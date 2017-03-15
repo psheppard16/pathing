@@ -1,4 +1,4 @@
-__author__ = 'psheppard16'
+__author__ = 'Preston Sheppard'
 import math
 from abc import ABCMeta, abstractmethod
 class GameObject(metaclass=ABCMeta):
