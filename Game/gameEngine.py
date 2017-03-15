@@ -10,7 +10,14 @@ class GameEngine:
         self.startPoint = (50, 50)
         self.endPoint = (100, 500)
         self.wallList = []
-        if True:
+        self.resolution = self.game.saveEngine.save.pathResolution
+        self.angleResolution = self.game.saveEngine.save.angleResolution
+        self.advance = 0  # amount on either side of the first, so a value of one produces 3 paths
+        self.branch = int(self.angleResolution / 2)
+        self.tolerance = math.sin(math.pi / self.angleResolution) * self.resolution * 2 - 1
+
+
+        if self.game.saveEngine.save.wallType == "basic":
             wall = ((150, 300), (300, 150))
             self.wallList.append(wall)
             wall = ((300, 150), (400, 150))
@@ -37,12 +44,12 @@ class GameEngine:
             self.wallList.append(wall)
             wall = ((self.indent, self.game.window.height - self.indent), (self.indent, self.indent))
             self.wallList.append(wall)
-        elif True:
+        elif self.game.saveEngine.save.wallType == "maze":
             self.indent = 20
             wallList = mazeGenerator.generateSquareMaze(16, 9, (self.game.window.height - self.indent) / 9)
             for wall in wallList:
                 self.wallList.append(((self.indent / 2 + wall[0][0], self.indent / 2 + wall[0][1]), (self.indent / 2 + wall[1][0], self.indent / 2 + wall[1][1])))
-        else:
+        elif self.game.saveEngine.save.wallType == "random":
             for i in range(5):
                 x1 = random.randint(0, 1000)
                 y1 = random.randint(0, 1000)
@@ -65,48 +72,24 @@ class GameEngine:
                 endTime = self.game.frameRateEngine.getTime()
                 print(endTime - self.startTime)
 
-        # wallClass.reset()
-        # wallClass.generateWalls(self.wallList)
-
     def run(self):
-        if self.game.saveEngine.saveNumber == 1:
-            startTime = self.game.frameRateEngine.getTime()
-            pathing.findPath(self.startPoint, self.endPoint, self.wallList, resolution=100)
-            mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
-            if mouseX > self.game.window.width - self.indent - 1:
-                mouseX = self.game.window.width - self.indent - 1
-            if mouseX < self.indent + 1:
-                mouseX = self.indent + 1
-            mouseY = self.game.window.height - (self.game.window.root.winfo_pointery() - self.game.window.root.winfo_rooty())
-            if mouseY > self.game.window.height - self.indent - 1:
-                mouseY = self.game.window.height - self.indent - 1
-            if mouseY < self.indent + 1:
-                mouseY = self.indent + 1
-            self.endPoint = (mouseX, mouseY)
-            endTime = self.game.frameRateEngine.getTime()
-            print("Time:", endTime - startTime)
-        elif self.game.saveEngine.saveNumber == 0:
-            resolution = 100
-            angleResolution = 11
-            advance = 0  # amount on either side of the first, so a value of one produces 3 paths
-            branch = int(angleResolution / 2)
-            tolerance = math.sin(math.pi / angleResolution) * resolution * 2 - 1
+        if self.game.saveEngine.saveNumber == 0:
 
-            if angleResolution % 2 == 0:
-                raise Exception("Angle Resolution=" + str(angleResolution) + " must be odd")
-            if advance >= int(angleResolution / 2):
-                raise Exception("Advance amount=" + str(advance) + " must be less than half of Angle Resolution")
+            if self.angleResolution % 2 == 0:
+                raise Exception("Angle Resolution=" + str(self.angleResolution) + " must be odd")
+            if self.advance >= int(self.angleResolution / 2):
+                raise Exception("Advance amount=" + str(self.advance) + " must be less than half of Angle Resolution")
 
             if not self.startedPath:
                 pathing.setsG = []
                 wallClass.reset()
                 wallClass.generateWalls(self.wallList)
-                pathing.createStartingPoints(self.startPoint, self.endPoint, pathing.setsG, tolerance)
+                pathing.createStartingPoints(self.startPoint, self.endPoint, pathing.setsG, self.tolerance)
                 self.startedPath = True
 
             startTime = self.game.frameRateEngine.getTime()
             while self.game.frameRateEngine.getTime() - startTime < 1 / 30:
-                done = pathing.run(pathing.setsG, resolution, angleResolution, advance, branch)
+                done = pathing.run(pathing.setsG, self.resolution, self.angleResolution, self.advance, self.branch)
                 sum = 0
                 for set in pathing.setsG:
                     sum += len(set)
@@ -135,6 +118,22 @@ class GameEngine:
                     self.startedPath = False
                     self.startTime = self.game.frameRateEngine.getTime()
                     break
+        elif self.game.saveEngine.saveNumber == 1:
+            startTime = self.game.frameRateEngine.getTime()
+            pathing.findPath(self.startPoint, self.endPoint, self.wallList, resolution=100)
+            mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
+            if mouseX > self.game.window.width - self.indent - 1:
+                mouseX = self.game.window.width - self.indent - 1
+            if mouseX < self.indent + 1:
+                mouseX = self.indent + 1
+            mouseY = self.game.window.height - (self.game.window.root.winfo_pointery() - self.game.window.root.winfo_rooty())
+            if mouseY > self.game.window.height - self.indent - 1:
+                mouseY = self.game.window.height - self.indent - 1
+            if mouseY < self.indent + 1:
+                mouseY = self.indent + 1
+            self.endPoint = (mouseX, mouseY)
+            endTime = self.game.frameRateEngine.getTime()
+            print("Time:", endTime - startTime)
 
     def keyReleased(self, event):
         if event.keysym == "a":

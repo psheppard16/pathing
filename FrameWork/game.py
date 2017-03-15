@@ -13,7 +13,7 @@ class Game:
         #do not remove anything
         self.window = Window(self)
         self.frameRateEngine = FrameRateEngine(self)
-        self.gameEngine = None #GameEngine(self)
+        self.gameEngine = None
         self.drawingEngine = DrawingEngine(self)
         self.saveEngine = SaveEngine()
         self.screenEngine = ScreenEngine(self)

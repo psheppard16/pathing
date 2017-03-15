@@ -1,6 +1,5 @@
 __author__ = 'python'
 import pickle
-import os
 from FrameWork.SaveFiles.saveFile import SaveFile
 class SaveEngine:
     def __init__(self):
@@ -17,6 +16,17 @@ class SaveEngine:
     def loadChar(self, saveNumber):
         self.saveSelected = True
         self.saveNumber = saveNumber
+        filePath = "FrameWork/SaveFiles/saveFile" + str(saveNumber)
+        try:
+            with open(filePath, 'rb') as input:
+                self.save = pickle.load(input)
+        except EOFError and FileNotFoundError:
+            raise Exception("File not found")
 
     def saveCharacter(self, saveNumber):
-        pass
+        filePath = "FrameWork/SaveFiles/saveFile" + str(saveNumber)
+        try:
+            with open(filePath, 'wb') as output:
+                pickle.dump(self.save, output, pickle.HIGHEST_PROTOCOL)
+        except EOFError and FileNotFoundError:
+            raise Exception("File not found")

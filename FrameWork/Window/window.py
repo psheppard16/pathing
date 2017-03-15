@@ -49,7 +49,10 @@ class Window:
         '''
         if event.keysym == "Escape":
             self.root.destroy()
-        self.game.gameEngine.keyPressed(event)
+        try:
+            self.game.gameEngine.keyPressed(event)
+        except AttributeError:
+            pass
 
     def keyReleased(self, event):
         '''
@@ -57,4 +60,7 @@ class Window:
         :param event: the event object
         :return: None
         '''
-        self.game.gameEngine.keyReleased(event)
+        try:
+            self.game.gameEngine.keyReleased(event)
+        except AttributeError:
+            pass
