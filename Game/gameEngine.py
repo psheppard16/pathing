@@ -1,6 +1,7 @@
 __author__ = 'Preston Sheppard'
 import math
 import random
+import time as tm
 import Game.Pathing.pathing as pathing
 import Game.Pathing.wall as wallClass
 import Game.Maze.mazeGenerator as mazeGenerator
@@ -15,6 +16,10 @@ class GameEngine:
         self.advance = 0  # amount on either side of the first, so a value of one produces 3 paths
         self.branch = int(self.angleResolution / 2)
         self.tolerance = math.sin(math.pi / self.angleResolution) * self.resolution * 2 - 1
+        if self.angleResolution % 2 == 0:
+            raise Exception("Angle Resolution=" + str(self.angleResolution) + " must be odd")
+        if self.advance >= int(self.angleResolution / 2):
+            raise Exception("Advance amount=" + str(self.advance) + " must be less than half of Angle Resolution")
 
         self.indent = 20
 
@@ -73,12 +78,6 @@ class GameEngine:
 
     def run(self):
         if self.game.saveEngine.saveNumber == 0:
-
-            if self.angleResolution % 2 == 0:
-                raise Exception("Angle Resolution=" + str(self.angleResolution) + " must be odd")
-            if self.advance >= int(self.angleResolution / 2):
-                raise Exception("Advance amount=" + str(self.advance) + " must be less than half of Angle Resolution")
-
             if not self.startedPath:
                 pathing.setsG = []
                 wallClass.reset()
@@ -119,7 +118,7 @@ class GameEngine:
                     break
         elif self.game.saveEngine.saveNumber == 1:
             startTime = self.game.frameRateEngine.getTime()
-            pathing.findPath(self.startPoint, self.endPoint, self.wallList, resolution=100)
+            pathing.findPath(self.startPoint, self.endPoint, self.wallList, resolution=self.resolution)
             mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
             if mouseX > self.game.window.width - self.indent - 1:
                 mouseX = self.game.window.width - self.indent - 1

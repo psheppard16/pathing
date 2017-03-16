@@ -457,7 +457,7 @@ class CanvasObject(Screen, metaclass=ABCMeta):
                 points.append((int(pointList[index][0] + position[0]), int(pointList[index][1] + position[1])))
 
         show = False
-        for point in pointList:
+        for point in points:
             if not show:
                 if point[0] < self.game.window.width and point[0] > 0:
                     if point[1] < self.game.window.height and point[1] > 0:

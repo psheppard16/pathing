@@ -77,7 +77,7 @@ class PathObject():
                     blockingWalls = {}
                     lengths = {}
 
-                    while intersectedWalls: #doe snot generate blocking walls kosherly
+                    while intersectedWalls: #does not generate blocking walls kosherly
                         wall = intersectedWalls.pop(0)
                         for point in wall.line:
                             if point not in blockingWalls and geo.liesInTriangle(point, (point1, point2, point3)):
@@ -243,16 +243,20 @@ class PathObject():
                 while objectsToEliminate:  # delete objects after to avoid iterating while deleting
                     objectsToEliminate.pop().eliminate()
 
-    def prune(self):
+    def prune(self, angleResolution):
         if not self.hasBeenEliminated and self.creator and not self.anchorPoint:
             left = False
             right = False
             for pathObject in self.pathObjectList:
                 if pathObject != self and pathObject.creator == self.creator:
                     if geo.lineToPoint((pathObject.position, pathObject.creator.position), self.position) < self.tolerance:
-                        if geo.ang((self.creator.position, self.position), (pathObject.creator.position, pathObject.position)) < 0:
+                        angle = geo.ang((self.creator.position, self.position), (pathObject.creator.position, pathObject.position))
+                        if -math.pi * 2 / angleResolution < angle < 0:
                             left = True
-                        else:
+                        elif math.pi * 2 / angleResolution > angle > 0:
+                            right = True
+                        elif angle == 0:
+                            left = True
                             right = True
                         if left and right:
                             self.eliminate()

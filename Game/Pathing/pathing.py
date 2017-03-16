@@ -56,7 +56,7 @@ def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
 
 def run(sets, resolution, angleResolution, advance, branch):
     reducePaths(sets)
-    prunePaths(sets)
+    prunePaths(sets, angleResolution)
     return addPaths(sets, resolution, angleResolution, advance, branch)
 
 def addPaths(sets, resolution, angleResolution, advance, branch):
@@ -71,7 +71,10 @@ def addPaths(sets, resolution, angleResolution, advance, branch):
                     pathObject.advance(resolution, angleResolution, advance)
                     pathAdded = True
                 else:
-                    pathObject.eliminate()
+                    pathObject.advanced = True
+                    pathObject.branched = True
+                    pathObject.backtracked = True
+                    #pathObject.eliminate()
             else:
                 pathObject.advance(resolution, angleResolution, advance)
                 pathAdded = True
@@ -85,7 +88,10 @@ def addPaths(sets, resolution, angleResolution, advance, branch):
                         pathObject.branch(resolution, angleResolution, advance, branch)
                         pathAdded = True
                     else:
-                        pathObject.eliminate()
+                        pathObject.advanced = True
+                        pathObject.branched = True
+                        pathObject.backtracked = True
+                        #pathObject.eliminate()
                 else:
                     pathObject.branch(resolution, angleResolution, advance, branch)
                     pathAdded = True
@@ -99,67 +105,32 @@ def addPaths(sets, resolution, angleResolution, advance, branch):
                         pathObject.backtrack(resolution, angleResolution, advance, branch)
                         pathAdded = True
                     else:
-                        pathObject.eliminate()
+                        pathObject.advanced = True
+                        pathObject.branched = True
+                        pathObject.backtracked = True
+                        #pathObject.eliminate()
                 else:
                     pathObject.backtrack(resolution, angleResolution, advance, branch)
                     pathAdded = True
 
     return not pathAdded
 
-def setStaticVariables():
-    PathObject.ADVANCES_TO_TRY = 1000
-    PathObject.BRANCHES_TO_TRY = 1000
-    PathObject.BACKTRACKS_TO_TRY = 1000
-    PathObject.ADVANCE_AMOUNT = 0
-    PathObject.BRANCH_AMOUNT = 4
-    PathObject.ANGLE_RESOLUTION = 15
-
-    AMOUNT = 100
-    PACKING_COEFFICIENT = .907
-
-    MINIMUM = 50
-    MAXIMUM = 100000000000000000
-
-    largestDistance = 0
-    for pathObjectList1 in PathObject.sets:
-        for pathObject1 in pathObjectList1:
-            for pathObjectList2 in PathObject.sets:
-                for pathObject2 in pathObjectList2:
-                    if pathObject2 != pathObject1:
-                        newDistance = geo.distanceP(pathObject1.position, pathObject2.position)
-                        if newDistance > largestDistance:
-                            largestDistance = newDistance
-
-    checkRadius = math.sqrt(PACKING_COEFFICIENT * largestDistance ** 2 / AMOUNT)
-
-    if checkRadius < MINIMUM:
-        checkRadius = MINIMUM
-    if checkRadius > MAXIMUM:
-        checkRadius = MAXIMUM
-
-    PathObject.SLOWER_TOLERANCE = checkRadius - 1
-    PathObject.BACKTRACK_TOLERANCE = checkRadius - 1
-    PathObject.CONNECTION_TOLERANCE = checkRadius - 1
-    PathObject.SNAP_TOLERANCE = checkRadius - 1
-
-    PathObject.RESOLUTION = checkRadius / 2 / math.sin(math.pi / PathObject.ANGLE_RESOLUTION)
-    PathObject.END_TOLERANCE = PathObject.RESOLUTION * 2
-
-    if PathObject.ANGLE_RESOLUTION % 2 == 0:
-        raise Exception("Angle Resolution=" + str(PathObject.ANGLE_RESOLUTION) + " must be odd")
-    if PathObject.ADVANCE_AMOUNT >= int(PathObject.ANGLE_RESOLUTION / 2):
-        raise Exception(
-            "Advance amount=" + str(PathObject.ADVANCE_AMOUNT) + " must be less than half of Angle Resolution")
-
 def reducePaths(sets):
     for pathObjectList in sets:
         for pathObject in pathObjectList:
             pathObject.reduce()
 
-def prunePaths(sets):
     for pathObjectList in sets:
         for pathObject in pathObjectList:
-            pathObject.prune()
+            if pathObject.children:
+                if not pathObject.anchorPoint:
+                    pathObject.eliminate()
+
+
+def prunePaths(sets, angleResolution):
+    for pathObjectList in sets:
+        for pathObject in pathObjectList:
+            pathObject.prune(angleResolution)
 
 def generateMap(wallList, startPoint, xMin, yMin, xMax, yMax, step=10):
     finalPaths = []

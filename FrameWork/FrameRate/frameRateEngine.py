@@ -99,19 +99,16 @@ class FrameRateEngine:
         """
         longestTask = None
         for task in self.taskList:
-            if task.runTime > longestTask.runTime:
+            if not longestTask or task.runTime > longestTask.runTime:
                 longestTask = task
             if task.runTime == 0:
                 raise Exception("Task timer for task: (" + str(task.taskName) + ") never ended")
 
-        if self.longestTask:
+        if longestTask:
             print("frame rate:", str(1 / self.tickSpeed))
-            print("Longest task:", self.longestTask, "Percent:", str(self.longestTaskTime / self.tickSpeed * 100) + "%" , "Time:", str(self.longestTaskTime))
+            print("Longest task:", longestTask.taskName, "Percent:", str(longestTask.runTime / self.tickSpeed * 100) + "%" , "Time:", str(longestTask.runTime))
         else:
             raise Exception("No tasks have finished")
-
-        self.longestTask = "null"
-        self.longestTaskTime = 0
 
     def printAllTasks(self):
         """
