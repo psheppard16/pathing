@@ -73,8 +73,10 @@ class Options(Screen):
 
         self.resolutionF.set("Resolution: " + self.game.saveEngine.save.resolution)
 
+        self.pathResolutionB.delete(0, "end")
         self.pathResolutionB.insert(0, self.game.saveEngine.save.pathResolution)
 
+        self.angleResolutionB.delete(0, "end")
         self.angleResolutionB.insert(0, self.game.saveEngine.save.angleResolution)
 
         self.wallTypeF.set("Wall Type: " + self.game.saveEngine.save.wallType)

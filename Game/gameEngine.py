@@ -51,8 +51,6 @@ class GameEngine:
             self.wallList.append(wall)
         elif self.game.saveEngine.save.wallType == "maze":
             self.wallList = json.load(open("Maze/maze.json"))
-            wallClass.reset()
-            wallClass.generateWalls(self.wallList)
         elif self.game.saveEngine.save.wallType == "random":
             for i in range(5):
                 x1 = random.randint(0, 1000)
@@ -61,6 +59,9 @@ class GameEngine:
                 y2 = random.randint(0, 1000)
                 wall = ((x1, y1), (x2, y2))
                 self.wallList.append(wall)
+
+        wallClass.reset()
+        wallClass.generateWalls(self.wallList)
 
         self.startedPath = False
         self.pathCompleted = False

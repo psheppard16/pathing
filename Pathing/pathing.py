@@ -56,7 +56,6 @@ def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
         return arrangedPath
 
 def run(sets, resolution, angleResolution, advance, branch):
-    reducePaths(sets)
     prunePaths(sets, angleResolution)
     return addPaths(sets, resolution, angleResolution, advance, branch)
 
@@ -75,7 +74,6 @@ def addPaths(sets, resolution, angleResolution, advance, branch):
                     pathObject.advanced = True
                     pathObject.branched = True
                     pathObject.backtracked = True
-                    #pathObject.eliminate()
             else:
                 pathObject.advance(resolution, angleResolution, advance)
                 pathAdded = True
@@ -92,7 +90,6 @@ def addPaths(sets, resolution, angleResolution, advance, branch):
                         pathObject.advanced = True
                         pathObject.branched = True
                         pathObject.backtracked = True
-                        #pathObject.eliminate()
                 else:
                     pathObject.branch(resolution, angleResolution, advance, branch)
                     pathAdded = True
@@ -109,24 +106,11 @@ def addPaths(sets, resolution, angleResolution, advance, branch):
                         pathObject.advanced = True
                         pathObject.branched = True
                         pathObject.backtracked = True
-                        #pathObject.eliminate()
                 else:
                     pathObject.backtrack(resolution, angleResolution, advance, branch)
                     pathAdded = True
 
     return not pathAdded
-
-def reducePaths(sets):
-    for pathObjectList in sets:
-        for pathObject in pathObjectList:
-            pathObject.reduce()
-
-    for pathObjectList in sets:
-        for pathObject in pathObjectList:
-            if pathObject.children:
-                if not pathObject.anchorPoint:
-                    pathObject.eliminate()
-
 
 def prunePaths(sets, angleResolution):
     for pathObjectList in sets:

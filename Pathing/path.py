@@ -3,7 +3,7 @@ import math
 from Pathing.wall import WallObject
 class PathObject():
     def __init__(self, x, y, creator, tolerance=None, sets=None, targetPoint=None, hasConnected=False, hasAdvanced=False, hasBacktracked=False,
-                 hasBranched=False, hasFinished=False, anchorPoint=None, hasSplit=False):
+                 hasBranched=False, hasFinished=False, anchorPoint=None):
         self.x = x
         self.y = y
         self.position = (x, y)
@@ -16,7 +16,6 @@ class PathObject():
         self.hasFinished = hasFinished
         self.hasConnected = hasConnected
         self.anchorPoint = anchorPoint
-        self.hasSplit = hasSplit
 
         if self.creator:
             self.sets = self.creator.sets
@@ -32,6 +31,9 @@ class PathObject():
             self.removeIntersectingPaths(WallObject.wallList)
 
             self.removeSlowerPaths(self.tolerance)
+
+            while self.reduce():
+                pass
 
             self.connect(self.tolerance)
         else:
@@ -73,6 +75,7 @@ class PathObject():
                     self.creator.children.remove(self)
                     self.creator = self.creator.creator
                     self.creator.children.append(self)
+                    return True
                 else:
                     blockingWalls = {}
                     lengths = {}
@@ -99,6 +102,7 @@ class PathObject():
                                 new = PathObject(snapPoint[0], snapPoint[1], self.creator.creator, anchorPoint=anchorPoint)
                                 if new and not new.hasBeenEliminated:
                                     self.creator.graft(new, includeSelf=False)
+                                    return True
 
     def getLength(self):
         length = 0
@@ -245,23 +249,25 @@ class PathObject():
 
     def prune(self, angleResolution):
         if not self.hasBeenEliminated and self.creator and not self.anchorPoint:
-            left = False
-            right = False
-            for pathObject in self.pathObjectList:
-                if pathObject != self and pathObject.creator == self.creator:
-                    if geo.lineToPoint((pathObject.position, pathObject.creator.position), self.position) < self.tolerance:
-                        angle = geo.ang((self.creator.position, self.position), (pathObject.creator.position, pathObject.position))
-                        if -math.pi * 2 / angleResolution < angle < 0:
-                            left = True
-                        elif math.pi * 2 / angleResolution > angle > 0:
-                            right = True
-                        elif angle == 0:
-                            left = True
-                            right = True
-                        if left and right:
-                            self.eliminate()
-                            break
-
+            if self.children: #eliminate paths which have not reduced properly
+                self.eliminate()
+            else: #eliminated paths which are surrounded by valid paths
+                left = False
+                right = False
+                for pathObject in self.pathObjectList:
+                    if pathObject != self and pathObject.creator == self.creator:
+                        if geo.lineToPoint((pathObject.position, pathObject.creator.position), self.position) < self.tolerance:
+                            angle = geo.ang((self.creator.position, self.position), (pathObject.creator.position, pathObject.position))
+                            if -math.pi * 2 / angleResolution < angle < 0:
+                                left = True
+                            elif math.pi * 2 / angleResolution > angle > 0:
+                                right = True
+                            elif angle == 0:
+                                left = True
+                                right = True
+                            if left and right:
+                                self.eliminate()
+                                break
 
     def finishPath(self, tolerance):
         if self.hasFinished:
@@ -272,15 +278,14 @@ class PathObject():
             PathObject(self.targetPoint[0], self.targetPoint[1], self, hasConnected=True, hasAdvanced=True,
                        hasBacktracked=True, hasBranched=True, hasFinished=True, anchorPoint=self.targetPoint)
 
-    def copy(self, creator, hasConnected=None, hasAdvanced=None, hasBacktracked=None, hasBranched=None, hasFinished=None, hasSplit=None):
+    def copy(self, creator, hasConnected=None, hasAdvanced=None, hasBacktracked=None, hasBranched=None, hasFinished=None):
         return PathObject(self.x, self.y, creator,
                         hasConnected= hasConnected if hasConnected else self.hasConnected,
                         hasAdvanced= hasAdvanced if hasAdvanced else self.hasAdvanced,
                         hasBacktracked= hasBacktracked if hasBacktracked else self.hasBacktracked,
                         hasBranched= hasBranched if hasBranched else self.hasBranched,
                         hasFinished= hasFinished if hasFinished else self.hasFinished,
-                        anchorPoint= self.anchorPoint,
-                        hasSplit= hasSplit if hasSplit else self.hasSplit)
+                        anchorPoint= self.anchorPoint)
 
     def copyChildren(self, creator):
         cousins = []
@@ -309,21 +314,3 @@ class PathObject():
                     cousin = pair[1]
                     if cousin and not cousin.hasBeenEliminated:
                         creators.extend(origional.copyChildren(cousin))
-
-    def split(self, wall):
-        if not self.hasSplit and not self.hasBeenEliminated:
-            connectedWalls = wall.connections1
-            for wall1 in connectedWalls:
-                wall1 = wall.line
-            points = geo.getSnapPoints(connectedWalls, wall.point1, (self.x, self.y))
-            for point in points:
-                self.hasSplit = True
-                PathObject(point[0], point[1], self, anchorPoint=wall.point1, hasSplit=True)
-
-            connectedWalls = wall.connections2
-            for wall1 in connectedWalls:
-                wall1 = wall.line
-            points = geo.getSnapPoints(connectedWalls, wall.point2, (self.x, self.y))
-            for point in points:
-                self.hasSplit = True
-                PathObject(point[0], point[1], self, anchorPoint=wall.point2, hasSplit=True)
