@@ -1,10 +1,10 @@
 __author__ = 'Preston Sheppard'
-import math
 import random
-import time as tm
-import Game.Pathing.pathing as pathing
-import Game.Pathing.wall as wallClass
-import Game.Maze.mazeGenerator as mazeGenerator
+import Pathing.pathing as pathing
+import math
+import json
+import Pathing.wall as wallClass
+
 class GameEngine:
     def __init__(self, game):
         self.game = game
@@ -50,9 +50,9 @@ class GameEngine:
             wall = ((self.indent, self.game.window.height - self.indent), (self.indent, self.indent))
             self.wallList.append(wall)
         elif self.game.saveEngine.save.wallType == "maze":
-            wallList = mazeGenerator.generateSquareMaze(16, 9, (self.game.window.height - self.indent) / 9)
-            for wall in wallList:
-                self.wallList.append(((self.indent / 2 + wall[0][0], self.indent / 2 + wall[0][1]), (self.indent / 2 + wall[1][0], self.indent / 2 + wall[1][1])))
+            self.wallList = json.load(open("Maze/maze.json"))
+            wallClass.reset()
+            wallClass.generateWalls(self.wallList)
         elif self.game.saveEngine.save.wallType == "random":
             for i in range(5):
                 x1 = random.randint(0, 1000)
@@ -80,8 +80,6 @@ class GameEngine:
         if self.game.saveEngine.saveNumber == 0:
             if not self.startedPath:
                 pathing.setsG = []
-                wallClass.reset()
-                wallClass.generateWalls(self.wallList)
                 pathing.createStartingPoints(self.startPoint, self.endPoint, pathing.setsG, self.tolerance)
                 self.startedPath = True
 

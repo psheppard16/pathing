@@ -1,6 +1,6 @@
+import Pathing.geometry as geo
 import math
-import Game.Pathing.geometry as geo
-from Game.Pathing.wall import WallObject
+from Pathing.wall import WallObject
 class PathObject():
     def __init__(self, x, y, creator, tolerance=None, sets=None, targetPoint=None, hasConnected=False, hasAdvanced=False, hasBacktracked=False,
                  hasBranched=False, hasFinished=False, anchorPoint=None, hasSplit=False):
@@ -89,7 +89,7 @@ class PathObject():
                         anchorPoint = min(lengths, key=lengths.get)
                         connectedWalls = blockingWalls.pop(anchorPoint)
                         lengths.pop(anchorPoint)
-                        snapPoints = geo.getSnapPoints(connectedWalls, anchorPoint, self.position)
+                        snapPoints = geo.getSnapPoints(connectedWalls, anchorPoint, self.position, shift=3)
                         for snapPoint in snapPoints:
                             valid = True
                             for wall in connectedWalls:

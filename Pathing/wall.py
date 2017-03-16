@@ -1,11 +1,11 @@
-import Game.Pathing.geometry as geo
+import Pathing.geometry as geo
 class WallObject():
     wallList = []
     rawList = []
     def __init__(self, line):
-        self.line = line
-        self.point1 = line[0]
-        self.point2 = line[1]
+        self.line = ((line[0][0], line[0][1]), (line[1][0], line[1][1]))
+        self.point1 = self.line[0]
+        self.point2 = self.line[1]
         self.connections = {self.point1: [], self.point2: []}
 
     def intersects(self, segment):

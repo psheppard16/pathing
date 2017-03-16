@@ -1,6 +1,8 @@
 __author__ = 'Preston Sheppard'
 from tkinter import *
 from FrameWork.Screens.screen import Screen
+import json
+import Maze.gridSquare as gs
 
 class Options(Screen):
     def __init__(self, game):
@@ -10,6 +12,10 @@ class Options(Screen):
         self.resolutionB = Button(self.game.window.root, textvariable=self.resolutionF, command=self.resolution,
                                   bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
         self.resolutionB.pack(in_=self.f, pady=15)
+
+        self.generateB = Button(self.game.window.root, text="Generate New Maze", command=self.generate,
+                                  bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
+        self.generateB.pack(in_=self.f, pady=15)
 
         self.pathResolutionL = Label(self.game.window.root, text="Path Resolution", bg="#%02x%02x%02x" % (255, 165, 0),
                                      font="Helvetica 15 bold", padx=10, pady=10)
@@ -52,6 +58,12 @@ class Options(Screen):
 
     def quit(self):
         self.game.window.root.destroy()
+
+    def generate(self):
+        indent = 20
+        walls = gs.generateSquareMaze(16, 9, (self.game.window.height - indent) / 9, location=(indent/2, indent/2))
+        with open('Maze/maze.json', 'w') as outfile:
+            json.dump(walls, outfile)
 
     def setUp(self):
         if self.game.saveEngine.save.smoothFrames == True:

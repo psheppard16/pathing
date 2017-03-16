@@ -1,5 +1,5 @@
 __author__ = 'Preston Sheppard'
-import Game.Pathing.pathing as pathing
+import Pathing.pathing as pathing
 from FrameWork.Display.canvasObject import CanvasObject
 try:
     import pygame
@@ -42,7 +42,7 @@ class DrawingEngine(CanvasObject):
             for pathObjectList in pathing.setsG:
                 for pathObject in pathObjectList:
                     if pathObject.anchorPoint:
-                        self.showCircle((pathObject.anchorPoint[0], pathObject.anchorPoint[1]), 10, (255, 255, 0),
+                        self.showCircle(pathObject.position, 10, (255, 255, 0),
                                         shiftPosition=True)
                     if pathObject.creator:
                         if pathObject.hasBranched:

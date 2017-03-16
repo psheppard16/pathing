@@ -1,8 +1,9 @@
 __author__ = 'Preston Sheppard'
-import Game.Pathing.wall as wallClass
-from Game.Pathing.path import PathObject
+import Pathing.wall as wallClass
 import math
-import Game.Pathing.geometry as geo
+
+from Pathing.path import PathObject
+
 toleranceG = 100
 setsG = []
 

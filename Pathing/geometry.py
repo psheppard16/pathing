@@ -1,5 +1,4 @@
 import math
-
 def lineToPoint(line, point):
     if line[1] == line[0]:
         return distance(line[0][0], line[0][1], point[0], point[1])
@@ -68,7 +67,19 @@ def dot(vA, vB):
     return vA[0] * vB[0] + vA[1] * vB[1]
 
 def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
-    if len(connectedWalls) > 1:
+    if len(connectedWalls) == 1:
+        if connectedWalls[0].point1 == sharedPoint:
+            secondPoint = connectedWalls[0].point2
+        else:
+            secondPoint = connectedWalls[0].point1
+        run = sharedPoint[0] - secondPoint[0]
+        rise = sharedPoint[1] - secondPoint[1]
+
+        wallAngle = math.atan2(rise, run)
+        x1 = sharedPoint[0] + math.cos(wallAngle) * shift
+        y1 = sharedPoint[1] + math.sin(wallAngle) * shift
+        return (x1, y1),
+    elif len(connectedWalls) > 1:
         angledWalls = []
         insideLine = (sharedPoint, insidePoint)
         for wall in connectedWalls:
@@ -98,19 +109,6 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
         y2 = sharedPoint[1] + math.sin(bisectorAngle) * shift
 
         return (x1, y1), (x2, y2)
-    elif len(connectedWalls) == 1:
-        if connectedWalls[0].point1 == sharedPoint:
-            secondPoint = connectedWalls[0].point2
-        else:
-            secondPoint = connectedWalls[0].point1
-        run = sharedPoint[0] - secondPoint[0]
-        rise = sharedPoint[1] - secondPoint[1]
-
-        wallAngle = math.atan2(rise, run)
-        x1 = sharedPoint[0] + math.cos(wallAngle) * shift
-        y1 = sharedPoint[1] + math.sin(wallAngle) * shift
-
-        return (x1, y1),
     else:
         raise Exception("there must be at least one connected wall")
 
