@@ -32,8 +32,7 @@ class PathObject():
 
             self.removeSlowerPaths(self.tolerance)
 
-            while self.reduce():
-                pass
+            self.simplify()
 
             self.connect(self.tolerance)
         else:
@@ -59,50 +58,76 @@ class PathObject():
         if not self.hasFinished and not self.hasBeenEliminated:
             self.finishPath(self.tolerance)
 
+    def simplify(self):
+        intersectedWalls = self.reduce()
+        if intersectedWalls and not self.creator.anchorPoint:
+            snapped = self.snap(intersectedWalls)
+            if not snapped:
+                self.navigate()
+
     def reduce(self):
         if self.creator and self.creator.creator and not self.hasBeenEliminated:
-            if not self.creator.hasBeenEliminated and not self.creator.creator.hasBeenEliminated:
-                point1 = self.position
-                point2 = self.creator.position
-                point3 = self.creator.creator.position
+            point1 = self.position
+            point3 = self.creator.creator.position
 
-                intersectedWalls = []
-                for wall in WallObject.wallList:
-                    if wall.intersects((point1, point3)):
-                        intersectedWalls.append(wall)
+            intersectedWalls = []
+            for wall in WallObject.wallList:
+                if wall.intersects((point1, point3)):
+                    intersectedWalls.append(wall)
 
-                if not intersectedWalls:
-                    self.creator.children.remove(self)
-                    self.creator = self.creator.creator
-                    self.creator.children.append(self)
-                    return True
-                else:
-                    blockingWalls = {}
-                    lengths = {}
+            if intersectedWalls:
+                return intersectedWalls
+            else:
+                self.creator.children.remove(self)
+                self.creator = self.creator.creator
+                self.creator.children.append(self)
 
-                    while intersectedWalls: #does not generate blocking walls kosherly
-                        wall = intersectedWalls.pop(0)
-                        for point in wall.line:
-                            if point not in blockingWalls and geo.liesInTriangle(point, (point1, point2, point3)):
-                                blockingWalls[point] = wall.connections[point] + [wall]
-                                lengths[point] = geo.distanceP(point1, point) + geo.distanceP(point3, point)
-                                intersectedWalls.extend(wall.connections[point])
+    def navigate(self):
+        pass
+        # import Pathing.pathing as pathing
+        # start = self.position
+        # end = self.creator.creator.position
+        # sets = pathing.findPath(start, end, WallObject.rawList, resolution=self.tolerance)
 
-                    while blockingWalls:
-                        anchorPoint = min(lengths, key=lengths.get)
-                        connectedWalls = blockingWalls.pop(anchorPoint)
-                        lengths.pop(anchorPoint)
-                        snapPoints = geo.getSnapPoints(connectedWalls, anchorPoint, self.position, shift=3)
-                        for snapPoint in snapPoints:
-                            valid = True
-                            for wall in connectedWalls:
-                                if wall.intersects((point1, snapPoint)) or wall.intersects((snapPoint, point3)):
-                                    valid = False
-                            if valid:
-                                new = PathObject(snapPoint[0], snapPoint[1], self.creator.creator, anchorPoint=anchorPoint)
-                                if new and not new.hasBeenEliminated:
-                                    self.creator.graft(new, includeSelf=False)
-                                    return True
+    def snap(self, intersectedWalls):
+        point1 = self.position
+        point2 = self.creator.position
+        point3 = self.creator.creator.position
+        blockingWalls = {}
+        lengths = {}
+
+        while intersectedWalls: #does not generate blocking walls kosherly
+            wall = intersectedWalls.pop(0)
+            for point in wall.line:
+                if point not in blockingWalls and geo.liesInTriangle(point, (point1, point2, point3)):
+                    blockingWalls[point] = wall.connections[point] + [wall]
+                    lengths[point] = geo.distanceP(point1, point) + geo.distanceP(point3, point)
+                    intersectedWalls.extend(wall.connections[point])
+
+        # for wall in WallObject.wallList:
+        #     for point in wall.line:
+        #         if point not in blockingWalls and geo.liesInTriangle(point, (point1, point2, point3)):
+        #             blockingWalls[point] = wall.connections[point] + [wall]
+        #             lengths[point] = geo.distanceP(point1, point) + geo.distanceP(point3, point)
+        #             intersectedWalls.extend(wall.connections[point])
+
+        pathAdded = False
+        while blockingWalls:
+            anchorPoint = min(lengths, key=lengths.get)
+            connectedWalls = blockingWalls.pop(anchorPoint)
+            lengths.pop(anchorPoint)
+            snapPoints = geo.getSnapPoints(connectedWalls, anchorPoint, self.position, shift=3)
+            for snapPoint in snapPoints:
+                valid = True
+                for wall in connectedWalls:
+                    if wall.intersects((point1, snapPoint)) or wall.intersects((snapPoint, point3)):
+                        valid = False
+                if valid:
+                    new = PathObject(snapPoint[0], snapPoint[1], self.creator.creator, anchorPoint=anchorPoint)
+                    if new and not new.hasBeenEliminated:
+                        self.creator.graft(new, includeSelf=False)
+                        pathAdded = True
+        return pathAdded
 
     def getLength(self):
         length = 0
@@ -122,16 +147,18 @@ class PathObject():
             for pathObjectList in self.sets:
                 if self not in pathObjectList:
                     for pathObject in pathObjectList:
-                        if geo.distanceP(pathObject.position, self.position) < tolerance:
+                        if pathObject.creator and geo.lineToPoint((pathObject.position, pathObject.creator.position), self.position) < tolerance:
                             toCopy = pathObject
-                            copy = toCopy.copy(self, hasConnected=True, hasBranched=True, hasAdvanced=True, hasBacktracked=True)
-                            while copy and not copy.hasBeenEliminated and toCopy.creator:
-                                toCopy = pathObject.creator
+                            copy = self
+                            while copy and not copy.hasBeenEliminated and toCopy:
                                 copy = toCopy.copy(copy, hasConnected=True, hasBranched=True, hasAdvanced=True, hasBacktracked=True)
-                            if copy and not copy.hasBeenEliminated:
-                                self.hasAdvanced = True
-                                self.hasBranched = True
-                                self.hasBacktracked = True
+                                toCopy = toCopy.creator
+                            self.hasAdvanced = True
+                            self.hasBranched = True
+                            self.hasBacktracked = True
+                            pathObject.hasAdvanced = True
+                            pathObject.hasBranched = True
+                            pathObject.hasBacktracked = True
 
     def advance(self, resolution, angleResolution, advance):
         if self.hasAdvanced:

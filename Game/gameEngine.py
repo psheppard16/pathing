@@ -11,6 +11,7 @@ class GameEngine:
         self.startPoint = (50, 50)
         self.endPoint = (100, 500)
         self.wallList = []
+        self.sets = []
         self.resolution = self.game.saveEngine.save.pathResolution
         self.angleResolution = self.game.saveEngine.save.angleResolution
         self.advance = 0  # amount on either side of the first, so a value of one produces 3 paths
@@ -80,15 +81,15 @@ class GameEngine:
     def run(self):
         if self.game.saveEngine.saveNumber == 0:
             if not self.startedPath:
-                pathing.setsG = []
-                pathing.createStartingPoints(self.startPoint, self.endPoint, pathing.setsG, self.tolerance)
+                self.sets = []
+                pathing.createStartingPoints(self.startPoint, self.endPoint, self.sets, self.tolerance)
                 self.startedPath = True
 
             startTime = self.game.frameRateEngine.getTime()
             while self.game.frameRateEngine.getTime() - startTime < 1 / 30:
-                done = pathing.run(pathing.setsG, self.resolution, self.angleResolution, self.advance, self.branch)
+                done = pathing.run(self.sets, self.resolution, self.angleResolution, self.advance, self.branch)
                 sum = 0
-                for set in pathing.setsG:
+                for set in self.sets:
                     sum += len(set)
                 if done:
                     mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
@@ -105,7 +106,7 @@ class GameEngine:
                     self.endTime = self.game.frameRateEngine.getTime()
                     time = self.endTime - self.startTime
                     self.times.append(time)
-                    print(pathing.getShortestLength(pathing.setsG))
+                    print(pathing.getShortestLength(self.sets))
                     print(sum)
                     sum = 0
                     for time in self.times:
@@ -117,7 +118,7 @@ class GameEngine:
                     break
         elif self.game.saveEngine.saveNumber == 1:
             startTime = self.game.frameRateEngine.getTime()
-            pathing.findPath(self.startPoint, self.endPoint, self.wallList, resolution=self.resolution)
+            self.sets = pathing.findPath(self.startPoint, self.endPoint, self.wallList, resolution=self.resolution)
             mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
             if mouseX > self.game.window.width - self.indent - 1:
                 mouseX = self.game.window.width - self.indent - 1

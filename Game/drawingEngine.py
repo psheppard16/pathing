@@ -30,6 +30,41 @@ class DrawingEngine(CanvasObject):
                     self.showLine(path[iter], path[iter + 1], (r, 0, b), 3, shiftPosition=True)
             for wall in self.game.gameEngine.wallList:
                 self.showLine(wall[0], wall[1], (0, 0, 0), 7, shiftPosition=True, rounded=True)
+        elif self.game.saveEngine.saveNumber == 0:
+            self.showCircle((self.game.gameEngine.endPoint[0], self.game.gameEngine.endPoint[1]), 10, (0, 255, 0),
+                            shiftPosition=True)
+            self.showCircle((self.game.gameEngine.startPoint[0], self.game.gameEngine.startPoint[1]),
+                            self.game.gameEngine.tolerance, (0, 255, 0), shiftPosition=True)
+
+            for wall in self.game.gameEngine.wallList:
+                self.showLine(wall[0], wall[1], (0, 0, 0), 7, shiftPosition=True, rounded=True)
+
+            for pathObjectList in self.game.gameEngine.sets:
+                for pathObject in pathObjectList:
+                    if pathObject.anchorPoint:
+                        self.showCircle(pathObject.position, 10, (255, 255, 0),
+                                        shiftPosition=True)
+                    if pathObject.creator:
+                        if pathObject.hasConnected:
+                            self.showLine(pathObject.position, pathObject.creator.position, (255, 255, 255), 3,
+                                          shiftPosition=True, rounded=True)
+                        elif pathObject.hasBacktracked:
+                            self.showLine(pathObject.position, pathObject.creator.position, (0, 255, 0), 3,
+                                      shiftPosition=True, rounded=True)
+                        elif pathObject.hasBranched:
+                            self.showLine(pathObject.position, pathObject.creator.position, (0, 0, 255), 3,
+                                          shiftPosition=True, rounded=True)
+                        elif pathObject.hasAdvanced:
+                            self.showLine(pathObject.position, pathObject.creator.position, (255, 255, 0), 3,
+                                          shiftPosition=True, rounded=True)
+                        else:
+                            self.showLine(pathObject.position, pathObject.creator.position, (255, 0, 0), 3,
+                                          shiftPosition=True, rounded=True)
+            pathToDraw = pathing.getShortestPath(self.game.gameEngine.sets)
+            while pathToDraw and pathToDraw.creator:
+                self.showLine((pathToDraw.x, pathToDraw.y), (pathToDraw.creator.x, pathToDraw.creator.y), (255, 0, 255),
+                              5, shiftPosition=True, rounded=True)
+                pathToDraw = pathToDraw.creator
         else:
             self.showCircle((self.game.gameEngine.endPoint[0], self.game.gameEngine.endPoint[1]), 10, (0, 255, 0),
                             shiftPosition=True)
@@ -39,24 +74,8 @@ class DrawingEngine(CanvasObject):
             for wall in self.game.gameEngine.wallList:
                 self.showLine(wall[0], wall[1], (0, 0, 0), 7, shiftPosition=True, rounded=True)
 
-            for pathObjectList in pathing.setsG:
-                for pathObject in pathObjectList:
-                    if pathObject.anchorPoint:
-                        self.showCircle(pathObject.position, 10, (255, 255, 0),
-                                        shiftPosition=True)
-                    if pathObject.creator:
-                        if pathObject.hasBranched:
-                            self.showLine(pathObject.position, pathObject.creator.position, (0, 255, 0), 3,
-                                          shiftPosition=True, rounded=True)
-                        elif pathObject.hasAdvanced:
-                            self.showLine(pathObject.position, pathObject.creator.position, (0, 0, 255), 3,
-                                          shiftPosition=True, rounded=True)
-                        else:
-                            self.showLine(pathObject.position, pathObject.creator.position, (255, 0, 0), 3,
-                                          shiftPosition=True, rounded=True)
-
-            pathToDraw = pathing.getShortestPath(pathing.setsG)
+            pathToDraw = pathing.getShortestPath(self.game.gameEngine.sets)
             while pathToDraw and pathToDraw.creator:
-                self.showLine((pathToDraw.x, pathToDraw.y), (pathToDraw.creator.x, pathToDraw.creator.y), (255, 165, 0),
+                self.showLine((pathToDraw.x, pathToDraw.y), (pathToDraw.creator.x, pathToDraw.creator.y), (255, 0, 255),
                               5, shiftPosition=True, rounded=True)
                 pathToDraw = pathToDraw.creator

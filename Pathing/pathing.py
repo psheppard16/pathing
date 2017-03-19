@@ -1,11 +1,7 @@
 __author__ = 'Preston Sheppard'
 import Pathing.wall as wallClass
 import math
-
 from Pathing.path import PathObject
-
-toleranceG = 100
-setsG = []
 
 def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
     resolution = resolution
@@ -20,8 +16,6 @@ def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
         raise Exception("Advance amount=" + str(advance) + " must be less than half of Angle Resolution")
 
     sets = []
-    global setsG
-    setsG = sets
 
     wallClass.reset()
     wallClass.generateWalls(wallList)
@@ -30,10 +24,13 @@ def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
 
     done = False
     while not done:
+        setsG = sets
         done = run(sets, resolution, angleResolution, advance, branch)
 
-    shortestPath = getShortestPath(sets)
+    return sets
+    #return getShortestPath(sets)
 
+def parsePath(shortestPath, startPoint):
     if not shortestPath:
         print("could not find a path between those two points")
     else:
@@ -48,10 +45,10 @@ def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
         if shortestPath.targetPoint == startPoint:
             while unarrangedpath:
                 pathObject = unarrangedpath.pop()
-                arrangedPath.append((pathObject.x, pathObject.y))
+                arrangedPath.append(pathObject.position)
         else:
             for pathObject in unarrangedpath:
-                arrangedPath.append((pathObject.x, pathObject.y))
+                arrangedPath.append(pathObject.position)
 
         return arrangedPath
 
