@@ -1,6 +1,7 @@
 import Pathing.geometry as geo
 import math
 from Pathing.wall import WallObject
+import itertools
 class PathObject():
     def __init__(self, x, y, creator, tolerance=None, sets=None, targetPoint=None, hasConnected=False, hasAdvanced=False, hasBacktracked=False,
                  hasBranched=False, hasFinished=False, anchorPoint=None):
@@ -61,9 +62,7 @@ class PathObject():
     def simplify(self):
         intersectedWalls = self.reduce()
         if intersectedWalls and not self.creator.anchorPoint:
-            snapped = self.snap(intersectedWalls)
-            if not snapped:
-                self.navigate()
+            self.snap(intersectedWalls)
 
     def reduce(self):
         if self.creator and self.creator.creator and not self.hasBeenEliminated:
@@ -82,26 +81,19 @@ class PathObject():
                 self.creator = self.creator.creator
                 self.creator.children.append(self)
 
-    def navigate(self):
-        pass
-        # import Pathing.pathing as pathing
-        # start = self.position
-        # end = self.creator.creator.position
-        # sets = pathing.findPath(start, end, WallObject.rawList, resolution=self.tolerance)
-
     def snap(self, intersectedWalls):
         point1 = self.position
         point2 = self.creator.position
         point3 = self.creator.creator.position
-        blockingWalls = {}
-        lengths = {}
+        connectedWalls = {}
+        #lengths = {}
 
         while intersectedWalls: #does not generate blocking walls kosherly
             wall = intersectedWalls.pop(0)
             for point in wall.line:
-                if point not in blockingWalls and geo.liesInTriangle(point, (point1, point2, point3)):
-                    blockingWalls[point] = wall.connections[point] + [wall]
-                    lengths[point] = geo.distanceP(point1, point) + geo.distanceP(point3, point)
+                if point not in connectedWalls and geo.liesInTriangle(point, (point1, point2, point3)):
+                    connectedWalls[point] = wall.connections[point] + [wall]
+                    #lengths[point] = geo.distanceP(point1, point) + geo.distanceP(point3, point)
                     intersectedWalls.extend(wall.connections[point])
 
         # for wall in WallObject.wallList:
@@ -112,22 +104,38 @@ class PathObject():
         #             intersectedWalls.extend(wall.connections[point])
 
         pathAdded = False
-        while blockingWalls:
-            anchorPoint = min(lengths, key=lengths.get)
-            connectedWalls = blockingWalls.pop(anchorPoint)
-            lengths.pop(anchorPoint)
-            snapPoints = geo.getSnapPoints(connectedWalls, anchorPoint, self.position, shift=3)
-            for snapPoint in snapPoints:
-                valid = True
-                for wall in connectedWalls:
-                    if wall.intersects((point1, snapPoint)) or wall.intersects((snapPoint, point3)):
-                        valid = False
-                if valid:
-                    new = PathObject(snapPoint[0], snapPoint[1], self.creator.creator, anchorPoint=anchorPoint)
-                    if new and not new.hasBeenEliminated:
-                        self.creator.graft(new, includeSelf=False)
-                        pathAdded = True
-        return pathAdded
+        nodesToTry = 1
+        while not pathAdded and nodesToTry < len(connectedWalls):
+            lengths = {}
+            permutaions = itertools.permutations(connectedWalls, nodesToTry)
+            for permutaion in permutaions:
+                length = 0
+                lastPoint = point1
+                for point in permutaion:
+                    length += geo.distanceP(point, lastPoint)
+                    lastPoint = point
+                length += geo.distanceP(lastPoint, point3)
+                lengths[permutaion] = length
+
+            while lengths:
+                permutaion = min(lengths, key=lengths.get)
+                lengths.pop(permutaion)
+                last = self.creator.creator
+                for anchorPoint in permutaion:
+                    connected = connectedWalls[anchorPoint]
+                    snapPoint = geo.getSnapPoints(connected, anchorPoint, self.position, shift=3)
+
+                # for snapPoint in snapPoints:
+                #     valid = True
+                #     for wall in connected:
+                #         if wall.intersects((point1, snapPoint)) or wall.intersects((snapPoint, point3)):
+                #             valid = False
+                #     if valid:
+                #         new = PathObject(snapPoint[0], snapPoint[1], self.creator.creator, anchorPoint=anchorPoint)
+                #         if new and not new.hasBeenEliminated:
+                #             self.creator.graft(new, includeSelf=False)
+                #             pathAdded = True
+            nodesToTry += 1
 
     def getLength(self):
         length = 0

@@ -80,23 +80,18 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
         y1 = sharedPoint[1] + math.sin(wallAngle) * shift
         return (x1, y1),
     elif len(connectedWalls) > 1:
-        angledWalls = []
+        angles = {}
         insideLine = (sharedPoint, insidePoint)
         for wall in connectedWalls:
             for index, point in enumerate(wall.line):
                 if point == sharedPoint:
-                    angledWalls.append((wall, ang(insideLine, (sharedPoint, wall.line[index - 1]))))
+                    angles[wall] = ang(insideLine, (sharedPoint, wall.line[index - 1]))
 
         ordered = []  # order the walls based on angle to insideLine
-        while (angledWalls):
-            smallest = None
-            for wallAndAngle in angledWalls:
-                if not smallest:
-                    smallest = wallAndAngle
-                else:
-                    if wallAndAngle[1] < smallest[1]:
-                        smallest = wallAndAngle
-            ordered.append(angledWalls.pop(angledWalls.index(smallest)))
+        while (angles):
+            wall = min(angles, key=angles.get)
+            ordered.append(wall)
+            angles.pop(wall)
 
         first = ordered[0][0]  # closest wall clockwise
         second = ordered[-1][0]  # closest wall counterclockwise
@@ -104,11 +99,14 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
         bisectorAngle = getBisectorAngle(first.line, second.line)  # the bisector line of the two walls
         x1 = sharedPoint[0] - math.cos(bisectorAngle) * shift
         y1 = sharedPoint[1] - math.sin(bisectorAngle) * shift
+        point1 = (x1, y1)
+
 
         x2 = sharedPoint[0] + math.cos(bisectorAngle) * shift
         y2 = sharedPoint[1] + math.sin(bisectorAngle) * shift
+        point2 = (x2, y2)
 
-        return (x1, y1), (x2, y2)
+        return point1, #point2
     else:
         raise Exception("there must be at least one connected wall")
 
