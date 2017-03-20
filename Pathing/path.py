@@ -95,7 +95,7 @@ class PathObject():
 
         pathAdded = False
         nodesToTry = 1
-        while not pathAdded and nodesToTry < 2:
+        while not pathAdded and nodesToTry <= len(connectedWalls):
             lengths = {}
             permutaions = itertools.permutations(connectedWalls, nodesToTry)
             for permutaion in permutaions:

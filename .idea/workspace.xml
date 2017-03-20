@@ -56,15 +56,15 @@
       <file leaf-file-name="path.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Pathing/path.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.67972744">
-              <caret line="97" column="47" selection-start-line="97" selection-start-column="47" selection-end-line="97" selection-end-column="47" />
+            <state vertical-scroll-proportion="0.1584327">
+              <caret line="97" column="66" selection-start-line="97" selection-start-column="66" selection-end-line="97" selection-end-column="66" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
-                <element signature="e#4914#5136#0" expanded="false" />
-                <element signature="e#5179#5323#0" expanded="false" />
-                <element signature="e#5367#6410#0" expanded="false" />
-                <element signature="e#6481#7035#0" expanded="false" />
-                <element signature="e#7113#7884#0" expanded="false" />
+                <element signature="e#4933#5155#0" expanded="false" />
+                <element signature="e#5198#5342#0" expanded="false" />
+                <element signature="e#5386#6429#0" expanded="false" />
+                <element signature="e#6500#7054#0" expanded="false" />
+                <element signature="e#7132#7903#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -584,11 +584,11 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#4914#5136#0" expanded="false" />
-            <element signature="e#5179#5323#0" expanded="false" />
-            <element signature="e#5367#6410#0" expanded="false" />
-            <element signature="e#6481#7035#0" expanded="false" />
-            <element signature="e#7113#7884#0" expanded="false" />
+            <element signature="e#4933#5155#0" expanded="false" />
+            <element signature="e#5198#5342#0" expanded="false" />
+            <element signature="e#5386#6429#0" expanded="false" />
+            <element signature="e#6500#7054#0" expanded="false" />
+            <element signature="e#7132#7903#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -939,15 +939,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pathing/path.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.67972744">
-          <caret line="97" column="47" selection-start-line="97" selection-start-column="47" selection-end-line="97" selection-end-column="47" />
+        <state vertical-scroll-proportion="0.1584327">
+          <caret line="97" column="66" selection-start-line="97" selection-start-column="66" selection-end-line="97" selection-end-column="66" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#4914#5136#0" expanded="false" />
-            <element signature="e#5179#5323#0" expanded="false" />
-            <element signature="e#5367#6410#0" expanded="false" />
-            <element signature="e#6481#7035#0" expanded="false" />
-            <element signature="e#7113#7884#0" expanded="false" />
+            <element signature="e#4933#5155#0" expanded="false" />
+            <element signature="e#5198#5342#0" expanded="false" />
+            <element signature="e#5386#6429#0" expanded="false" />
+            <element signature="e#6500#7054#0" expanded="false" />
+            <element signature="e#7132#7903#0" expanded="false" />
           </folding>
         </state>
       </provider>
