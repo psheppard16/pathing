@@ -78,7 +78,7 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
         wallAngle = math.atan2(rise, run)
         x1 = sharedPoint[0] + math.cos(wallAngle) * shift
         y1 = sharedPoint[1] + math.sin(wallAngle) * shift
-        return (x1, y1),
+        return x1, y1
     elif len(connectedWalls) > 1:
         angles = {}
         insideLine = (sharedPoint, insidePoint)
@@ -93,8 +93,8 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
             ordered.append(wall)
             angles.pop(wall)
 
-        first = ordered[0][0]  # closest wall clockwise
-        second = ordered[-1][0]  # closest wall counterclockwise
+        first = ordered[0]  # closest wall clockwise
+        second = ordered[-1]  # closest wall counterclockwise
 
         bisectorAngle = getBisectorAngle(first.line, second.line)  # the bisector line of the two walls
         x1 = sharedPoint[0] - math.cos(bisectorAngle) * shift
@@ -106,7 +106,7 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
         y2 = sharedPoint[1] + math.sin(bisectorAngle) * shift
         point2 = (x2, y2)
 
-        return point1, #point2
+        return point1 #point2
     else:
         raise Exception("there must be at least one connected wall")
 
