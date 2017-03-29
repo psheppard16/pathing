@@ -1,6 +1,9 @@
 __author__ = 'Preston Sheppard'
 import Pathing.pathing as pathing
+import Pathing.geometry as geo
 from FrameWork.Display.canvasObject import CanvasObject
+from Pathing.wall import WallObject
+import math
 try:
     import pygame
 except:
@@ -31,6 +34,21 @@ class DrawingEngine(CanvasObject):
             for wall in self.game.gameEngine.wallList:
                 self.showLine(wall[0], wall[1], (0, 0, 0), 7, shiftPosition=True, rounded=True)
         elif self.game.saveEngine.saveNumber == 0:
+            connectedWalls = {}
+            for wall in WallObject.wallList:
+                for point in wall.line:
+                    if point not in connectedWalls:
+                        connectedWalls[point] = wall.connections[point] + [wall]
+
+            # snapPoints = []
+            # for point, walls in connectedWalls.items():
+            #     for angle in range(0,8):
+            #         x1 = point[0] + math.cos(math.pi * 2 * angle / 8 + .1) * 20
+            #         y1 = point[1] + math.sin(math.pi * 2 * angle / 8 + .1) * 20
+            #         snapPoints.append(geo.getSnapPoints(walls, point, (x1, y1), shift=15))
+            # for snapPoint in snapPoints:
+            #     self.showCircle((snapPoint[0], snapPoint[1]), 10, (0, 255, 255), shiftPosition=True)
+
             self.showCircle((self.game.gameEngine.endPoint[0], self.game.gameEngine.endPoint[1]), 10, (0, 255, 0),
                             shiftPosition=True)
             self.showCircle((self.game.gameEngine.startPoint[0], self.game.gameEngine.startPoint[1]),

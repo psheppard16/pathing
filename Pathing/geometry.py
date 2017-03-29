@@ -27,44 +27,41 @@ def lineToPoint(line, point):
 
 def ang(lineA, lineB):
     x1 = lineA[1][0] - lineA[0][0]
-    x2 = lineB[1][0] - lineB[0][0]
-
     y1 = lineA[1][1] - lineA[0][1]
+
+    x2 = lineB[1][0] - lineB[0][0]
     y2 = lineB[1][1] - lineB[0][1]
 
-    dot = x1 * x2 + y1 * y2  # dot product
-    det = x1 * y2 - y1 * x2  # determinant
-    angle = math.atan2(det, dot)  # atan2(y, x) or atan2(sin, cos)
-    return angle
+    detV = det((x1, y1), (x2, y2))
+    dotV = dot((x1, y1), (x2, y2))
+    return math.atan2(detV, dotV)
 
 def getBisectorAngle(line1, line2):
-    sharedPoint = lineIntersection(line1, line2)
-
-    if sharedPoint is True:
-        return ang(((0, 0), (1, 0)), line1) + math.pi / 2
-    else:
-        secondPoint1 = line1[0] if not (
-        int(line1[0][0]) == int(sharedPoint[0]) and int(line1[0][1]) == int(sharedPoint[1])) else line1[1]
-        secondPoint2 = line2[0] if not (
-        int(line2[0][0]) == int(sharedPoint[0]) and int(line2[0][1]) == int(sharedPoint[1])) else line2[1]
-
-    x1 = secondPoint1[0] - sharedPoint[0]
-    y1 = secondPoint1[1] - sharedPoint[1]
-
-    x2 = secondPoint2[0] - sharedPoint[0]
-    y2 = secondPoint2[1] - sharedPoint[1]
+    x1 = line1[0][0] - line1[1][0]
+    y1 = line1[0][1] - line1[1][1]
+    x2 = line2[0][0] - line2[1][0]
+    y2 = line2[0][1] - line2[1][1]
 
     theta_1 = math.atan2(y1, x1)
     theta_2 = math.atan2(y2, x2)
 
-    middle_theta = (theta_1 + theta_2) / 2
-    return middle_theta
+    return (theta_1 + theta_2) / 2
 
 def det(a, b):
     return a[0] * b[1] - a[1] * b[0]
 
 def dot(vA, vB):
     return vA[0] * vB[0] + vA[1] * vB[1]
+
+def add(v1, v2):
+    return v1[0] + v2[0], v1[1] + v2[1]
+
+def sub(v1, v2):
+    return v1[0] - v2[0], v1[1] - v2[1]
+
+def unit_vector(v):
+    abs = math.sqrt(v[0] ** 2 + v[1] ** 2)
+    return v[0] / abs, v[1] / abs
 
 def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
     if len(connectedWalls) == 1:
@@ -85,28 +82,68 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
         for wall in connectedWalls:
             for index, point in enumerate(wall.line):
                 if point == sharedPoint:
-                    angles[wall] = ang(insideLine, (sharedPoint, wall.line[index - 1]))
+                    wall = (sharedPoint, wall.line[index - 1])
+                    angle = ang(insideLine, wall)
+                    if angle < 0:
+                        angle += math.pi * 2
+                    angles[wall] = angle
+        ordered = []  # order the walls based on angle to insideLine
+        while(angles):
+            wall = min(angles, key=angles.get)
+            ordered.append(wall)
+            angles.pop(wall)
+        first = ordered[0]  # closest wall clockwise
+        second = ordered[-1]  # closest wall counterclockwise
+        bisectorAngle = getBisectorAngle(first, second)  # the bisector line of the two walls
 
+        x1 = sharedPoint[0] + math.cos(bisectorAngle) * shift
+        y1 = sharedPoint[1] + math.sin(bisectorAngle) * shift
+        point1 = (x1, y1)
+
+        angles = {}
+        insideLine = (sharedPoint, point1)
+        for wall in connectedWalls:
+            for index, point in enumerate(wall.line):
+                if point == sharedPoint:
+                    wall = (sharedPoint, wall.line[index - 1])
+                    angle = ang(insideLine, wall)
+                    if angle < 0:
+                        angle += math.pi * 2
+                    angles[wall] = angle
         ordered = []  # order the walls based on angle to insideLine
         while (angles):
             wall = min(angles, key=angles.get)
             ordered.append(wall)
             angles.pop(wall)
+        first1 = ordered[0]  # closest wall clockwise
+        second1 = ordered[-1]  # closest wall counterclockwise
+        if first1 == first and second1 == second:
+            return point1
 
-        first = ordered[0]  # closest wall clockwise
-        second = ordered[-1]  # closest wall counterclockwise
-
-        bisectorAngle = getBisectorAngle(first.line, second.line)  # the bisector line of the two walls
-        x1 = sharedPoint[0] - math.cos(bisectorAngle) * shift
-        y1 = sharedPoint[1] - math.sin(bisectorAngle) * shift
-        point1 = (x1, y1)
-
-
-        x2 = sharedPoint[0] + math.cos(bisectorAngle) * shift
-        y2 = sharedPoint[1] + math.sin(bisectorAngle) * shift
+        x2 = sharedPoint[0] - math.cos(bisectorAngle) * shift
+        y2 = sharedPoint[1] - math.sin(bisectorAngle) * shift
         point2 = (x2, y2)
+        angles = {}
+        insideLine = (sharedPoint, point2)
+        for wall in connectedWalls:
+            for index, point in enumerate(wall.line):
+                if point == sharedPoint:
+                    wall = (sharedPoint, wall.line[index - 1])
+                    angle = ang(insideLine, wall)
+                    if angle < 0:
+                        angle += math.pi * 2
+                    angles[wall] = angle
+        ordered = []  # order the walls based on angle to insideLine
+        while (angles):
+            wall = min(angles, key=angles.get)
+            ordered.append(wall)
+            angles.pop(wall)
+        first2 = ordered[0]  # closest wall clockwise
+        second2 = ordered[-1]  # closest wall counterclockwise
+        if first2 == first and second2 == second:
+            return point2
 
-        return point1 #point2
+        raise Exception("failed to find snap point")
     else:
         raise Exception("there must be at least one connected wall")
 

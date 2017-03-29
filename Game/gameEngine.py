@@ -4,6 +4,7 @@ import Pathing.pathing as pathing
 import math
 import json
 import Pathing.wall as wallClass
+import time as tm
 
 class GameEngine:
     def __init__(self, game):
@@ -61,6 +62,39 @@ class GameEngine:
                 wall = ((x1, y1), (x2, y2))
                 self.wallList.append(wall)
 
+            # offset = 500
+            # wall1 = ((offset + 0, offset + 0), (offset + 100, offset + 0))
+            # if random.random() > .5:
+            #     self.wallList.append(wall1)
+            #
+            # wall2 = ((offset + 0, offset + 0), (offset + 100, offset + 100))
+            # if random.random() > .5:
+            #     self.wallList.append(wall2)
+            #
+            # wall3 = ((offset + 0, offset + 0), (offset + 0, offset + 100))
+            # if random.random() > .5:
+            #     self.wallList.append(wall3)
+            #
+            # wall4 = ((offset + 0, offset + 0), (offset - 100, offset + 100))
+            # if random.random() > .5:
+            #     self.wallList.append(wall4)
+            #
+            # wall5 = ((offset + 0, offset + 0), (offset - 100, offset + 0))
+            # if random.random() > .5:
+            #     self.wallList.append(wall5)
+            #
+            # wall6 = ((offset + 0, offset + 0), (offset - 100, offset - 100))
+            # if random.random() > .5:
+            #     self.wallList.append(wall6)
+            #
+            # wall7 = ((offset + 0, offset + 0), (offset + 0, offset - 100))
+            # if random.random() > .5:
+            #     self.wallList.append(wall7)
+            #
+            # wall8 = ((offset + 0, offset + 0), (offset + 100, offset - 100))
+            # if random.random() > .5:
+            #     self.wallList.append(wall8)
+
         wallClass.reset()
         wallClass.generateWalls(self.wallList)
 
@@ -80,6 +114,7 @@ class GameEngine:
 
     def run(self):
         if self.game.saveEngine.saveNumber == 0:
+            tm.sleep(.1)
             if not self.startedPath:
                 self.sets = []
                 pathing.createStartingPoints(self.startPoint, self.endPoint, self.sets, self.tolerance)

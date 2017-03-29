@@ -61,8 +61,8 @@ class PathObject():
 
     def simplify(self):
         intersectedWalls = self.reduce()
-        if intersectedWalls and not self.creator.anchorPoint:
-            self.snap(intersectedWalls)
+        if intersectedWalls:
+            self.snap()
 
     def reduce(self):
         if self.creator and self.creator.creator and not self.hasBeenEliminated:
@@ -81,17 +81,16 @@ class PathObject():
                 self.creator = self.creator.creator
                 self.creator.children.append(self)
 
-    def snap(self, intersectedWalls):
+    def snap(self):
         point1 = self.position
         point2 = self.creator.position
         point3 = self.creator.creator.position
-        connectedWalls = {}
 
+        connectedWalls = {}
         for wall in WallObject.wallList:
             for point in wall.line:
                 if point not in connectedWalls and geo.liesInTriangle(point, (point1, point2, point3)):
                     connectedWalls[point] = wall.connections[point] + [wall]
-                    intersectedWalls.extend(wall.connections[point])
 
         pathAdded = False
         nodesToTry = 1
@@ -112,7 +111,7 @@ class PathObject():
                 lengths.pop(permutaion)
                 last = self.creator.creator
                 for anchorPoint in permutaion:
-                    if (last and not last.hasBeenEliminated or last is self.creator.creator):
+                    if (last and not last.hasBeenEliminated) or last is self.creator.creator:
                         connected = connectedWalls[anchorPoint]
                         snapPoint = geo.getSnapPoints(connected, anchorPoint, self.creator.position, shift=3)
                         last = PathObject(snapPoint[0], snapPoint[1], last, anchorPoint=anchorPoint)
@@ -227,12 +226,18 @@ class PathObject():
     def removeBackTracks(self, tolerance):
         if not self.creator:
             raise Exception("Path must be a child in order to remove backtracks")
-        if not self.hasBeenEliminated:
+        if not self.hasBeenEliminated and not self.hasFinished and not self.hasConnected:
             pointToCheck = self.creator
             while pointToCheck.creator:
-                if geo.lineToPoint((pointToCheck.position, pointToCheck.creator.position), self.position) < tolerance and not self.hasFinished and not self.hasConnected:
-                    self.eliminate()
-                    break
+                if geo.lineToPoint((pointToCheck.position, pointToCheck.creator.position), self.position) < tolerance:
+                    reachable = True
+                    for wall in WallObject.wallList:
+                        if wall.intersects((self.position, pointToCheck.position)):
+                            reachable = False
+                            break
+                    if reachable:
+                        self.eliminate()
+                        break
                 pointToCheck = pointToCheck.creator
 
     def removeSlowerPaths(self, tolerance):
@@ -240,31 +245,25 @@ class PathObject():
             objectsToEliminate = []
             for pathObject in self.pathObjectList:
                 if pathObject != self and self.creator != pathObject:
-                    if geo.distanceP(self.position, pathObject.position) < tolerance:
-                        reachable = True
-                        for wall in WallObject.wallList:
-                            if wall.intersects((self.position, pathObject.position)):
-                                reachable = False
-                                break
-                        if reachable:
-                            length1 = self.getPromisedLength()
-                            length2 = pathObject.getPromisedLength()
-                            if self.anchorPoint and pathObject.anchorPoint:
-                                if pathObject.anchorPoint == self.anchorPoint:
-                                    if length1 >= length2:
-                                            self.eliminate()
-                                            break  # break so path doesnt delete itself twice
-                                    if length1 < length2:
-                                        objectsToEliminate.append(pathObject)
-                            elif not self.anchorPoint and not pathObject.anchorPoint:
+                    if (self.anchorPoint and pathObject.anchorPoint and
+                            pathObject.anchorPoint == self.anchorPoint) or \
+                            (not self.anchorPoint and not pathObject.anchorPoint):
+                        if geo.distanceP(self.position, pathObject.position) < tolerance:
+                            reachable = True
+                            for wall in WallObject.wallList:
+                                if wall.intersects((self.position, pathObject.position)):
+                                    reachable = False
+                                    break
+                            if reachable:
+                                length1 = self.getPromisedLength()
+                                length2 = pathObject.getPromisedLength()
                                 if length1 >= length2:
                                     self.eliminate()
                                     break
-                                if length1 < length2 and not self.creator.hasBacktracked:   # only delete existing objects if path isnt a backtrack
-                                    objectsToEliminate.append(pathObject)                   # this avoids overwriting identical paths after all paths
-                                                                                        # are almost resolved
+                                if length1 < length2:
+                                    objectsToEliminate.append(pathObject)
 
-            if not self.hasBeenEliminated and objectsToEliminate:
+            if not self.hasBeenEliminated:
                 while objectsToEliminate:  # delete objects after to avoid iterating while deleting
                     objectsToEliminate.pop().eliminate()
 
