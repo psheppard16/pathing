@@ -40,14 +40,14 @@ class DrawingEngine(CanvasObject):
                     if point not in connectedWalls:
                         connectedWalls[point] = wall.connections[point] + [wall]
 
-            # snapPoints = []
-            # for point, walls in connectedWalls.items():
-            #     for angle in range(0,8):
-            #         x1 = point[0] + math.cos(math.pi * 2 * angle / 8 + .1) * 20
-            #         y1 = point[1] + math.sin(math.pi * 2 * angle / 8 + .1) * 20
-            #         snapPoints.append(geo.getSnapPoints(walls, point, (x1, y1), shift=15))
-            # for snapPoint in snapPoints:
-            #     self.showCircle((snapPoint[0], snapPoint[1]), 10, (0, 255, 255), shiftPosition=True)
+            snapPoints = []
+            for point, walls in connectedWalls.items():
+                for angle in range(0,8):
+                    x1 = point[0] + math.cos(math.pi * 2 * angle / 8 + .1) * 20
+                    y1 = point[1] + math.sin(math.pi * 2 * angle / 8 + .1) * 20
+                    snapPoints.append(geo.getSnapPoints(walls, point, (x1, y1), shift=15))
+            for snapPoint in snapPoints:
+                self.showCircle((snapPoint[0], snapPoint[1]), 10, (0, 255, 255), shiftPosition=True)
 
             self.showCircle((self.game.gameEngine.endPoint[0], self.game.gameEngine.endPoint[1]), 10, (0, 255, 0),
                             shiftPosition=True)

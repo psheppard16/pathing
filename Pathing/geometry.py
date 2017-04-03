@@ -1,4 +1,6 @@
 import math
+
+
 def lineToPoint(line, point):
     if line[1] == line[0]:
         return distance(line[0][0], line[0][1], point[0], point[1])
@@ -25,6 +27,7 @@ def lineToPoint(line, point):
 
         return dist
 
+
 def ang(lineA, lineB):
     x1 = lineA[1][0] - lineA[0][0]
     y1 = lineA[1][1] - lineA[0][1]
@@ -35,6 +38,7 @@ def ang(lineA, lineB):
     detV = det((x1, y1), (x2, y2))
     dotV = dot((x1, y1), (x2, y2))
     return math.atan2(detV, dotV)
+
 
 def getBisectorAngle(line1, line2):
     x1 = line1[0][0] - line1[1][0]
@@ -47,36 +51,30 @@ def getBisectorAngle(line1, line2):
 
     return (theta_1 + theta_2) / 2
 
+
 def det(a, b):
     return a[0] * b[1] - a[1] * b[0]
+
 
 def dot(vA, vB):
     return vA[0] * vB[0] + vA[1] * vB[1]
 
+
 def add(v1, v2):
     return v1[0] + v2[0], v1[1] + v2[1]
 
+
 def sub(v1, v2):
     return v1[0] - v2[0], v1[1] - v2[1]
+
 
 def unit_vector(v):
     abs = math.sqrt(v[0] ** 2 + v[1] ** 2)
     return v[0] / abs, v[1] / abs
 
-def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
-    if len(connectedWalls) == 1:
-        if connectedWalls[0].point1 == sharedPoint:
-            secondPoint = connectedWalls[0].point2
-        else:
-            secondPoint = connectedWalls[0].point1
-        run = sharedPoint[0] - secondPoint[0]
-        rise = sharedPoint[1] - secondPoint[1]
 
-        wallAngle = math.atan2(rise, run)
-        x1 = sharedPoint[0] + math.cos(wallAngle) * shift
-        y1 = sharedPoint[1] + math.sin(wallAngle) * shift
-        return x1, y1
-    elif len(connectedWalls) > 1:
+def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
+    if connectedWalls:
         angles = {}
         insideLine = (sharedPoint, insidePoint)
         for wall in connectedWalls:
@@ -88,7 +86,7 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
                         angle += math.pi * 2
                     angles[wall] = angle
         ordered = []  # order the walls based on angle to insideLine
-        while(angles):
+        while (angles):
             wall = min(angles, key=angles.get)
             ordered.append(wall)
             angles.pop(wall)
@@ -147,28 +145,35 @@ def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
     else:
         raise Exception("there must be at least one connected wall")
 
+
 def liesInTriangle(point, triangle):
     tPoint0 = triangle[0]
     tPoint1 = triangle[1]
     tPoint2 = triangle[2]
 
-    area = ((tPoint1[1] - tPoint2[1]) * (tPoint0[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (tPoint0[1] - tPoint2[1]))
+    area = (
+    (tPoint1[1] - tPoint2[1]) * (tPoint0[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (tPoint0[1] - tPoint2[1]))
     if area == 0:
         return False
 
-    alpha = ((tPoint1[1] - tPoint2[1]) * (point[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (point[1] - tPoint2[1])) / area
+    alpha = ((tPoint1[1] - tPoint2[1]) * (point[0] - tPoint2[0]) + (tPoint2[0] - tPoint1[0]) * (
+    point[1] - tPoint2[1])) / area
 
-    beta = ((tPoint2[1] - tPoint0[1]) * (point[0] - tPoint2[0]) + (tPoint0[0] - tPoint2[0]) * (point[1] - tPoint2[1])) / area
+    beta = ((tPoint2[1] - tPoint0[1]) * (point[0] - tPoint2[0]) + (tPoint0[0] - tPoint2[0]) * (
+    point[1] - tPoint2[1])) / area
 
     gamma = 1 - alpha - beta
 
-    return alpha > 0 and beta > 0  and gamma > 0
+    return alpha > 0 and beta > 0 and gamma > 0
+
 
 def distance(x1, y1, x2, y2):
     return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
+
 def distanceP(point1, point2):
     return distance(point1[0], point1[1], point2[0], point2[1])
+
 
 def segmentIntersection(line1, line2):
     xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
@@ -202,6 +207,7 @@ def segmentIntersection(line1, line2):
     else:
         return None
 
+
 def lineIntersection(line1, line2):
     xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
     ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
@@ -216,11 +222,12 @@ def lineIntersection(line1, line2):
 
     return x, y
 
+
 def nthOccurrence(n, element, list):
     """for n>0, returns index or None"""
     seen = 0
-    for i,x in enumerate(list):
-        if x==element:
+    for i, x in enumerate(list):
+        if x == element:
             seen += 1
-            if seen==n:
+            if seen == n:
                 return i

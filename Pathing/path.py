@@ -2,8 +2,11 @@ import Pathing.geometry as geo
 import math
 from Pathing.wall import WallObject
 import itertools
+
+
 class PathObject():
-    def __init__(self, x, y, creator, tolerance=None, sets=None, targetPoint=None, hasConnected=False, hasAdvanced=False, hasBacktracked=False,
+    def __init__(self, x, y, creator, tolerance=None, sets=None, targetPoint=None, hasConnected=False,
+                 hasAdvanced=False, hasBacktracked=False,
                  hasBranched=False, hasFinished=False, anchorPoint=None):
         self.x = x
         self.y = y
@@ -113,7 +116,7 @@ class PathObject():
                 for anchorPoint in permutaion:
                     if (last and not last.hasBeenEliminated) or last is self.creator.creator:
                         connected = connectedWalls[anchorPoint]
-                        snapPoint = geo.getSnapPoints(connected, anchorPoint, self.creator.position, shift=3)
+                        snapPoint = geo.getSnapPoints(connected, anchorPoint, self.creator.position, shift=5)
                         last = PathObject(snapPoint[0], snapPoint[1], last, anchorPoint=anchorPoint)
                     else:
                         break
@@ -140,11 +143,13 @@ class PathObject():
             for pathObjectList in self.sets:
                 if self not in pathObjectList:
                     for pathObject in pathObjectList:
-                        if pathObject.creator and geo.lineToPoint((pathObject.position, pathObject.creator.position), self.position) < tolerance:
+                        if pathObject.creator and geo.lineToPoint((pathObject.position, pathObject.creator.position),
+                                                                  self.position) < tolerance:
                             toCopy = pathObject
                             copy = self
                             while copy and not copy.hasBeenEliminated and toCopy:
-                                copy = toCopy.copy(copy, hasConnected=True, hasBranched=True, hasAdvanced=True, hasBacktracked=True)
+                                copy = toCopy.copy(copy, hasConnected=True, hasBranched=True, hasAdvanced=True,
+                                                   hasBacktracked=True)
                                 toCopy = toCopy.creator
                             self.hasAdvanced = True
                             self.hasBranched = True
@@ -246,7 +251,7 @@ class PathObject():
             for pathObject in self.pathObjectList:
                 if pathObject != self and self.creator != pathObject:
                     if (self.anchorPoint and pathObject.anchorPoint and
-                            pathObject.anchorPoint == self.anchorPoint) or \
+                                pathObject.anchorPoint == self.anchorPoint) or \
                             (not self.anchorPoint and not pathObject.anchorPoint):
                         if geo.distanceP(self.position, pathObject.position) < tolerance:
                             reachable = True
@@ -269,15 +274,17 @@ class PathObject():
 
     def prune(self, angleResolution):
         if not self.hasBeenEliminated and self.creator and not self.anchorPoint:
-            if self.children: #eliminate paths which have not reduced properly
+            if self.children:  # eliminate paths which have not reduced properly
                 self.eliminate()
-            else: #eliminated paths which are surrounded by valid paths
+            else:  # eliminated paths which are surrounded by valid paths
                 left = False
                 right = False
                 for pathObject in self.pathObjectList:
                     if pathObject != self and pathObject.creator == self.creator:
-                        if geo.lineToPoint((pathObject.position, pathObject.creator.position), self.position) < self.tolerance:
-                            angle = geo.ang((self.creator.position, self.position), (pathObject.creator.position, pathObject.position))
+                        if geo.lineToPoint((pathObject.position, pathObject.creator.position),
+                                           self.position) < self.tolerance:
+                            angle = geo.ang((self.creator.position, self.position),
+                                            (pathObject.creator.position, pathObject.position))
                             if -math.pi * 2 / angleResolution < angle < 0:
                                 left = True
                             elif math.pi * 2 / angleResolution > angle > 0:
@@ -298,14 +305,15 @@ class PathObject():
             PathObject(self.targetPoint[0], self.targetPoint[1], self, hasConnected=True, hasAdvanced=True,
                        hasBacktracked=True, hasBranched=True, hasFinished=True, anchorPoint=self.targetPoint)
 
-    def copy(self, creator, hasConnected=None, hasAdvanced=None, hasBacktracked=None, hasBranched=None, hasFinished=None):
+    def copy(self, creator, hasConnected=None, hasAdvanced=None, hasBacktracked=None, hasBranched=None,
+             hasFinished=None):
         return PathObject(self.x, self.y, creator,
-                        hasConnected= hasConnected if hasConnected else self.hasConnected,
-                        hasAdvanced= hasAdvanced if hasAdvanced else self.hasAdvanced,
-                        hasBacktracked= hasBacktracked if hasBacktracked else self.hasBacktracked,
-                        hasBranched= hasBranched if hasBranched else self.hasBranched,
-                        hasFinished= hasFinished if hasFinished else self.hasFinished,
-                        anchorPoint= self.anchorPoint)
+                          hasConnected=hasConnected if hasConnected else self.hasConnected,
+                          hasAdvanced=hasAdvanced if hasAdvanced else self.hasAdvanced,
+                          hasBacktracked=hasBacktracked if hasBacktracked else self.hasBacktracked,
+                          hasBranched=hasBranched if hasBranched else self.hasBranched,
+                          hasFinished=hasFinished if hasFinished else self.hasFinished,
+                          anchorPoint=self.anchorPoint)
 
     def copyChildren(self, creator):
         cousins = []
