@@ -3,111 +3,14 @@ import Pathing.wall as wallClass
 import math
 from Pathing.path import PathObject
 
-def findPath(startPoint, endPoint, wallList, resolution=50, angleResolution=11):
-    resolution = resolution
-    angleResolution = angleResolution
-    advance = 0  # amount on either side of the first, so a value of one produces 3 paths
-    branch = int(angleResolution / 2)
-    tolerance = math.sin(math.pi / angleResolution) * resolution * 2 - 1
-
-    if angleResolution % 2 == 0:
-        raise Exception("Angle Resolution=" + str(angleResolution) + " must be odd")
-    if advance >= int(angleResolution / 2):
-        raise Exception("Advance amount=" + str(advance) + " must be less than half of Angle Resolution")
-
-    sets = []
+def findPath(startPoint, endPoint, wallList):
 
     wallClass.reset()
     wallClass.generateWalls(wallList)
 
-    createStartingPoints(startPoint, endPoint, sets, tolerance)
-
-    done = False
-    while not done:
-        setsG = sets
-        done = run(sets, resolution, angleResolution, advance, branch)
-
-    return sets
-    #return getShortestPath(sets)
-
-def parsePath(shortestPath, startPoint):
-    if not shortestPath:
-        print("could not find a path between those two points")
-    else:
-        unarrangedpath = [shortestPath]
-
-        focus = shortestPath
-        while focus.creator:
-            focus = focus.creator
-            unarrangedpath.append(focus)
-
-        arrangedPath = []
-        if shortestPath.targetPoint == startPoint:
-            while unarrangedpath:
-                pathObject = unarrangedpath.pop()
-                arrangedPath.append(pathObject.position)
-        else:
-            for pathObject in unarrangedpath:
-                arrangedPath.append(pathObject.position)
-
-        return arrangedPath
-
 def run(sets, resolution, angleResolution, advance, branch):
     prunePaths(sets, angleResolution)
     return addPaths(sets, resolution, angleResolution, advance, branch)
-
-def addPaths(sets, resolution, angleResolution, advance, branch):
-    pathAdded = False
-    shortestLength = getShortestLength(sets)
-    candidates = getUnadvancedPaths(sets)
-
-    for pathObject in candidates:
-        if not pathObject.hasAdvanced and not pathObject.hasBeenEliminated:
-            if shortestLength:
-                if pathObject.getPromisedLength() <= shortestLength:
-                    pathObject.advance(resolution, angleResolution, advance)
-                    pathAdded = True
-                else:
-                    pathObject.advanced = True
-                    pathObject.branched = True
-                    pathObject.backtracked = True
-            else:
-                pathObject.advance(resolution, angleResolution, advance)
-                pathAdded = True
-
-    if not pathAdded:
-        candidates = getUnbranchedPaths(sets)
-        for pathObject in candidates:
-            if pathObject.hasAdvanced and not pathObject.hasBranched and not pathObject.hasBeenEliminated:
-                if shortestLength:
-                    if pathObject.getPromisedLength() <= shortestLength:
-                        pathObject.branch(resolution, angleResolution, advance, branch)
-                        pathAdded = True
-                    else:
-                        pathObject.advanced = True
-                        pathObject.branched = True
-                        pathObject.backtracked = True
-                else:
-                    pathObject.branch(resolution, angleResolution, advance, branch)
-                    pathAdded = True
-
-    if not pathAdded:
-        candidates = getUnbacktrackedPaths(sets)
-        for pathObject in candidates:
-            if pathObject.hasAdvanced and pathObject.hasBranched and not pathObject.hasBacktracked and not pathObject.hasBeenEliminated:
-                if shortestLength:
-                    if pathObject.getPromisedLength() <= shortestLength:
-                        pathObject.backtrack(resolution, angleResolution, advance, branch)
-                        pathAdded = True
-                    else:
-                        pathObject.advanced = True
-                        pathObject.branched = True
-                        pathObject.backtracked = True
-                else:
-                    pathObject.backtrack(resolution, angleResolution, advance, branch)
-                    pathAdded = True
-
-    return not pathAdded
 
 def prunePaths(sets, angleResolution):
     for pathObjectList in sets:
@@ -145,63 +48,125 @@ def getShortestPath(sets):
                     shortestLength = length
     return shortestPath
 
-def createStartingPoints(startPoint, endPoint, sets, tolerance):
-    PathObject(startPoint[0], startPoint[1], None, sets=sets, tolerance=tolerance, targetPoint=endPoint, hasAdvanced=True, hasBranched=True, hasBacktracked=True)
-    PathObject(endPoint[0], endPoint[1], None, sets=sets, tolerance=tolerance, targetPoint=startPoint)
+def generateNodes(walls):
+    wallIntersections = {}
+    for wall in walls:
+        for point in wall:
+            if point not in wallIntersections:
+                wallIntersections[point] = []
 
-def getUnadvancedPaths(sets):
-    points = []
-    for pathObjectList in sets:
-        for pathObject in pathObjectList:
-            if pathObject and not pathObject.hasBeenEliminated and not pathObject.hasAdvanced:
-                points.append(pathObject)
-    orderedPoints = []
-    while points:
-        smallestPromise = 100000000000
-        mostPromisingPath = None
-        for pathObject in points:
-            promisedLength = pathObject.getPromisedLength()
-            if promisedLength < smallestPromise:
-                mostPromisingPath = pathObject
-                smallestPromise = promisedLength
-        orderedPoints.append(mostPromisingPath)
-        points.remove(mostPromisingPath)
-    return orderedPoints
+    for sharedPoint in wallIntersections.keys():
+        toAdd = []
+        for wall in walls:
+            if sharedPoint in wall:
+                if wall not in wallIntersections[sharedPoint]:
+                    toAdd.append(wall)
+                else:
+                    raise Exception()
 
-def getUnbranchedPaths(sets):
-    points = []
-    for pathObjectList in sets:
-        for pathObject in pathObjectList:
-            if pathObject and not pathObject.hasBeenEliminated and not pathObject.hasBranched:
-                points.append(pathObject)
-    orderedPoints = []
-    while points:
-        smallestPromise = 100000000000
-        mostPromisingPath = None
-        for pathObject in points:
-            promisedLength = pathObject.getPromisedLength()
-            if promisedLength < smallestPromise:
-                mostPromisingPath = pathObject
-                smallestPromise = promisedLength
-        orderedPoints.append(mostPromisingPath)
-        points.remove(mostPromisingPath)
-    return orderedPoints
+        angles = {}
+        for wall in toAdd:
+            for index, point in enumerate(wall.line):
+                if point == sharedPoint:
+                    wall = (sharedPoint, wall.line[index - 1])
+                    angle = ang(((0, 0), (1, 0)), wall)
+                    if angle < 0:
+                        angle += math.pi * 2
+                    angles[wall] = angle
 
-def getUnbacktrackedPaths(sets):
-    points = []
-    for pathObjectList in sets:
-        for pathObject in pathObjectList:
-            if pathObject and not pathObject.hasBeenEliminated and not pathObject.hasBacktracked:
-                points.append(pathObject)
-    orderedPoints = []
-    while points:
-        smallestPromise = 100000000000
-        mostPromisingPath = None
-        for pathObject in points:
-            promisedLength = pathObject.getPromisedLength()
-            if promisedLength < smallestPromise:
-                mostPromisingPath = pathObject
-                smallestPromise = promisedLength
-        orderedPoints.append(mostPromisingPath)
-        points.remove(mostPromisingPath)
-    return orderedPoints
+        ordered = []
+        while angles:
+            wall = min(angles, key=angles.get)
+            ordered.append(wall)
+            angles.pop(wall)
+
+        wallIntersections[sharedPoint] = ordered
+
+    nodes = []
+    for sharedPoint, walls in wallIntersections.items():
+        for index in range(-1, walls.length - 1):
+            nodes.append(getSnapPoints(walls, sharedPoint, walls[index], walls[index + 1]))
+
+    return nodes
+
+def getSnapPoints(connectedWalls, sharedPoint, wall1, wall2,  shift=3):
+    first = wall1  # closest wall clockwise
+    second = wall2  # closest wall counterclockwise
+    bisectorAngle = getBisectorAngle(first, second)  # the bisector line of the two walls
+
+    x1 = sharedPoint[0] + math.cos(bisectorAngle) * shift
+    y1 = sharedPoint[1] + math.sin(bisectorAngle) * shift
+    point1 = (x1, y1)
+
+    angles = {}
+    insideLine = (sharedPoint, point1)
+    for wall in connectedWalls:
+        for index, point in enumerate(wall.line):
+            if point == sharedPoint:
+                wall = (sharedPoint, wall.line[index - 1])
+                angle = ang(insideLine, wall)
+                if angle < 0:
+                    angle += math.pi * 2
+                angles[wall] = angle
+    ordered = []  # order the walls based on angle to insideLine
+    while (angles):
+        wall = min(angles, key=angles.get)
+        ordered.append(wall)
+        angles.pop(wall)
+    first1 = ordered[0]  # closest wall clockwise
+    second1 = ordered[-1]  # closest wall counterclockwise
+    if first1 == first and second1 == second:
+        return point1
+
+    x2 = sharedPoint[0] - math.cos(bisectorAngle) * shift
+    y2 = sharedPoint[1] - math.sin(bisectorAngle) * shift
+    point2 = (x2, y2)
+    angles = {}
+    insideLine = (sharedPoint, point2)
+    for wall in connectedWalls:
+        for index, point in enumerate(wall.line):
+            if point == sharedPoint:
+                wall = (sharedPoint, wall.line[index - 1])
+                angle = ang(insideLine, wall)
+                if angle < 0:
+                    angle += math.pi * 2
+                angles[wall] = angle
+    ordered = []  # order the walls based on angle to insideLine
+    while (angles):
+        wall = min(angles, key=angles.get)
+        ordered.append(wall)
+        angles.pop(wall)
+    first2 = ordered[0]  # closest wall clockwise
+    second2 = ordered[-1]  # closest wall counterclockwise
+    if first2 == first and second2 == second:
+        return point2
+
+    raise Exception("failed to find snap point")
+
+def getBisectorAngle(line1, line2):
+    x1 = line1[0][0] - line1[1][0]
+    y1 = line1[0][1] - line1[1][1]
+    x2 = line2[0][0] - line2[1][0]
+    y2 = line2[0][1] - line2[1][1]
+
+    theta_1 = math.atan2(y1, x1)
+    theta_2 = math.atan2(y2, x2)
+
+    return (theta_1 + theta_2) / 2
+
+def ang(lineA, lineB):
+    x1 = lineA[1][0] - lineA[0][0]
+    y1 = lineA[1][1] - lineA[0][1]
+
+    x2 = lineB[1][0] - lineB[0][0]
+    y2 = lineB[1][1] - lineB[0][1]
+
+    detV = det((x1, y1), (x2, y2))
+    dotV = dot((x1, y1), (x2, y2))
+    return math.atan2(detV, dotV)
+
+def det(a, b):
+    return a[0] * b[1] - a[1] * b[0]
+
+def dot(vA, vB):
+    return vA[0] * vB[0] + vA[1] * vB[1]
