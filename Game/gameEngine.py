@@ -1,9 +1,8 @@
 __author__ = 'Preston Sheppard'
 import random
 import Pathing.pathing as pathing
-import math
+from Pathing.pathing import Path
 import json
-import Pathing.wall as wallClass
 import time as tm
 
 class GameEngine:
@@ -11,17 +10,9 @@ class GameEngine:
         self.game = game
         self.startPoint = (50, 50)
         self.endPoint = (100, 500)
+        self.fullPath = []
         self.wallList = []
-        self.sets = []
-        self.resolution = self.game.saveEngine.save.pathResolution
-        self.angleResolution = self.game.saveEngine.save.angleResolution
-        self.advance = 0  # amount on either side of the first, so a value of one produces 3 paths
-        self.branch = int(self.angleResolution / 2)
-        self.tolerance = math.sin(math.pi / self.angleResolution) * self.resolution * 2 - 1
-        if self.angleResolution % 2 == 0:
-            raise Exception("Angle Resolution=" + str(self.angleResolution) + " must be odd")
-        if self.advance >= int(self.angleResolution / 2):
-            raise Exception("Advance amount=" + str(self.advance) + " must be less than half of Angle Resolution")
+        self.nodes = []
 
         self.indent = 20
 
@@ -53,80 +44,71 @@ class GameEngine:
             self.wallList.append(wall)
         elif self.game.saveEngine.save.wallType == "maze":
             self.wallList = json.load(open("Maze/maze.json"))
+            for index, wall in enumerate(self.wallList):
+                self.wallList[index] = ((wall[0][0], wall[0][1]), (wall[1][0], wall[1][1]))
         elif self.game.saveEngine.save.wallType == "random":
-            for i in range(5):
-                x1 = random.randint(0, 1000)
-                y1 = random.randint(0, 1000)
-                x2 = random.randint(0, 1000)
-                y2 = random.randint(0, 1000)
-                wall = ((x1, y1), (x2, y2))
-                self.wallList.append(wall)
+            # for i in range(5):
+            #     x1 = random.randint(0, 1000)
+            #     y1 = random.randint(0, 1000)
+            #     x2 = random.randint(0, 1000)
+            #     y2 = random.randint(0, 1000)
+            #     wall = ((x1, y1), (x2, y2))
+            #     self.wallList.append(wall)
 
-            # offset = 500
-            # wall1 = ((offset + 0, offset + 0), (offset + 100, offset + 0))
-            # if random.random() > .5:
-            #     self.wallList.append(wall1)
-            #
-            # wall2 = ((offset + 0, offset + 0), (offset + 100, offset + 100))
-            # if random.random() > .5:
-            #     self.wallList.append(wall2)
-            #
-            # wall3 = ((offset + 0, offset + 0), (offset + 0, offset + 100))
-            # if random.random() > .5:
-            #     self.wallList.append(wall3)
-            #
-            # wall4 = ((offset + 0, offset + 0), (offset - 100, offset + 100))
-            # if random.random() > .5:
-            #     self.wallList.append(wall4)
-            #
-            # wall5 = ((offset + 0, offset + 0), (offset - 100, offset + 0))
-            # if random.random() > .5:
-            #     self.wallList.append(wall5)
-            #
-            # wall6 = ((offset + 0, offset + 0), (offset - 100, offset - 100))
-            # if random.random() > .5:
-            #     self.wallList.append(wall6)
-            #
-            # wall7 = ((offset + 0, offset + 0), (offset + 0, offset - 100))
-            # if random.random() > .5:
-            #     self.wallList.append(wall7)
-            #
-            # wall8 = ((offset + 0, offset + 0), (offset + 100, offset - 100))
-            # if random.random() > .5:
-            #     self.wallList.append(wall8)
+            offset = 500
+            wall1 = ((offset + 0, offset + 0), (offset + 100, offset + 0))
+            if random.random() > .5:
+                self.wallList.append(wall1)
 
-        wallClass.reset()
-        wallClass.generateWalls(self.wallList)
+            wall2 = ((offset + 0, offset + 0), (offset + 100, offset + 100))
+            if random.random() > .5:
+                self.wallList.append(wall2)
 
-        self.startedPath = False
-        self.pathCompleted = False
+            wall3 = ((offset + 0, offset + 0), (offset + 0, offset + 100))
+            if random.random() > .5:
+                self.wallList.append(wall3)
+
+            wall4 = ((offset + 0, offset + 0), (offset - 100, offset + 100))
+            if random.random() > .5:
+                self.wallList.append(wall4)
+
+            wall5 = ((offset + 0, offset + 0), (offset - 100, offset + 0))
+            if random.random() > .5:
+                self.wallList.append(wall5)
+
+            wall6 = ((offset + 0, offset + 0), (offset - 100, offset - 100))
+            if random.random() > .5:
+                self.wallList.append(wall6)
+
+            wall7 = ((offset + 0, offset + 0), (offset + 0, offset - 100))
+            if random.random() > .5:
+                self.wallList.append(wall7)
+
+            wall8 = ((offset + 0, offset + 0), (offset + 100, offset - 100))
+            if random.random() > .5:
+                self.wallList.append(wall8)
 
         self.endTime = None
         self.times = []
 
-        self.startTime = self.game.frameRateEngine.getTime()
-        if self.game.saveEngine.saveNumber == 2:
-            for iter in range(100):
-                self.startTime = self.game.frameRateEngine.getTime()
-                self.finalPaths = pathing.generateMap(self.wallList, self.startPoint, self.indent, self.indent, self.game.window.width - self.indent, self.game.window.height - self.indent, step=50)
-                endTime = self.game.frameRateEngine.getTime()
-                print(endTime - self.startTime)
+
+        self.nodes = pathing.generateNodes(self.startPoint, self.endPoint, self.wallList)
+        self.paths = []
+        self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.paths), Path(self.endPoint, None, self.startPoint, self.nodes, self.paths)])
+        self.finalPath = None
 
     def run(self):
         if self.game.saveEngine.saveNumber == 0:
-            tm.sleep(.1)
-            if not self.startedPath:
-                self.sets = []
-                pathing.createStartingPoints(self.startPoint, self.endPoint, self.sets, self.tolerance)
-                self.startedPath = True
-
-            startTime = self.game.frameRateEngine.getTime()
-            while self.game.frameRateEngine.getTime() - startTime < 1 / 30:
-                done = pathing.run(self.sets, self.resolution, self.angleResolution, self.advance, self.branch)
-                sum = 0
-                for set in self.sets:
-                    sum += len(set)
-                if done:
+            self.startTime = self.game.frameRateEngine.getTime()
+            while self.game.frameRateEngine.getTime() - self.startTime < 1 / 30:
+                finalPath = pathing.addPaths(self.paths)
+                if finalPath:
+                    fullPath = []
+                    focus = finalPath
+                    while focus:
+                        fullPath.append(focus.location)
+                        focus = focus.creator
+                    self.fullPath = fullPath
                     mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
                     if mouseX > self.game.window.width - self.indent - 1:
                         mouseX = self.game.window.width - self.indent - 1
@@ -141,19 +123,20 @@ class GameEngine:
                     self.endTime = self.game.frameRateEngine.getTime()
                     time = self.endTime - self.startTime
                     self.times.append(time)
-                    print(pathing.getShortestLength(self.sets))
-                    print(sum)
                     sum = 0
                     for time in self.times:
                         sum += time
                     average = sum / len(self.times)
                     print(self.times[-1], average)
-                    self.startedPath = False
                     self.startTime = self.game.frameRateEngine.getTime()
+
+                    self.nodes = pathing.generateNodes(self.startPoint, self.endPoint, self.wallList)
+                    self.paths = []
+                    self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.paths), Path(self.endPoint, None, self.startPoint, self.nodes, self.paths)])
                     break
         elif self.game.saveEngine.saveNumber == 1:
             startTime = self.game.frameRateEngine.getTime()
-            self.sets = pathing.findPath(self.startPoint, self.endPoint, self.wallList, resolution=self.resolution)
+            self.fullPath = pathing.findPath(self.startPoint, self.endPoint, self.wallList)
             mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
             if mouseX > self.game.window.width - self.indent - 1:
                 mouseX = self.game.window.width - self.indent - 1
