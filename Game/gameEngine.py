@@ -10,10 +10,7 @@ class GameEngine:
         self.game = game
         self.startPoint = (50, 50)
         self.endPoint = (100, 500)
-        self.fullPath = []
         self.wallList = []
-        self.nodes = []
-
         self.indent = 20
 
         if self.game.saveEngine.save.wallType == "basic":
@@ -92,16 +89,15 @@ class GameEngine:
         self.times = []
 
 
+        self.fullPath = []
         self.nodes = pathing.generateNodes(self.startPoint, self.endPoint, self.wallList)
         self.paths = []
-        self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.paths), Path(self.endPoint, None, self.startPoint, self.nodes, self.paths)])
-        self.finalPath = None
+        self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.paths)])
 
     def run(self):
         if self.game.saveEngine.saveNumber == 0:
             self.startTime = self.game.frameRateEngine.getTime()
             while self.game.frameRateEngine.getTime() - self.startTime < 1 / 30:
-                #tm.sleep(.1)
                 finalPath = pathing.addPaths(self.paths)
                 if finalPath:
                     fullPath = []
@@ -133,7 +129,7 @@ class GameEngine:
 
                     self.nodes = pathing.generateNodes(self.startPoint, self.endPoint, self.wallList)
                     self.paths = []
-                    self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.paths), Path(self.endPoint, None, self.startPoint, self.nodes, self.paths)])
+                    self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.paths)])
                     break
         elif self.game.saveEngine.saveNumber == 1:
             startTime = self.game.frameRateEngine.getTime()

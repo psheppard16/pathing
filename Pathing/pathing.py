@@ -7,27 +7,30 @@ class Path:
         self.paths.append(self)
         self.endPoint = endPoint
         self.creator = creator
+        self.nodes = nodes
         self.candidates = nodes[location][:]
+        del self.nodes[self.location]
+        self.children = []
         if self.creator:
             self.length = creator.length + distanceP(creator.location, self.location)
             self.candidates.remove(self.creator.location)
         else:
             self.length = 0
         self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint) + distanceP(self.candidates[0], self.location)
-        self.children = []
-        self.nodes = nodes
 
     def add(self):
-        new = Path(self.candidates.pop(0), self, self.endPoint, self.nodes, self.paths)
-        self.children.append(new)
-        if self.candidates:
-            self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint) + distanceP(self.candidates[0], self.location)
-        return new
+        next = self.candidates.pop(0)
+        if next in self.nodes:
+            new = Path(next, self, self.endPoint, self.nodes, self.paths)
+            self.children.append(new)
+            if self.candidates:
+                self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint) + distanceP(self.candidates[0], self.location)
+            return new
 
 def findPath(startPoint, endPoint, wallList):
     nodes = generateNodes(startPoint, endPoint, wallList)
     paths = []
-    paths.extend([Path(startPoint, None, endPoint, nodes, paths), Path(endPoint, None, startPoint, nodes, paths)])
+    paths.extend([Path(startPoint, None, endPoint, nodes, paths)])
     finalPath = None
     while not finalPath:
         finalPath = addPaths(paths)
@@ -42,7 +45,7 @@ def addPaths(paths):
     pathToAdvance = getPromisingPath(paths)
     if pathToAdvance:
         new = pathToAdvance.add()
-        if new.location == pathToAdvance.endPoint:
+        if new and new.location == pathToAdvance.endPoint:
             return new
     else:
         raise Exception("failed to find path")
@@ -112,38 +115,6 @@ def generateNodes(startPoint, endPoint, walls):
             ordered.append(wall)
             connected.pop(wall)
         nodes[node1] = ordered
-
-    for node1, connected1 in nodes.items():
-        for node2, connected2 in nodes.items():
-            if node1 != node2:
-                toRemove = []
-                for inner1 in connected1:
-                    for inner2 in connected2:
-                        if inner1 == inner2:
-                            toRemove.append(inner1)
-                for inner in toRemove:
-                    try:
-                        nodes[inner].remove(node1)
-                    except:
-                        pass
-                    try:
-                        nodes[inner].remove(node2)
-                    except:
-                        pass
-                    try:
-                        connected1.remove(inner)
-                    except:
-                        pass
-                    try:
-                        connected2.remove(inner)
-                    except:
-                        pass
-    toDelete = []
-    for node, connected in nodes.items():
-        if not connected:
-            toDelete.append(node)
-    for node in toDelete:
-            del nodes[node]
     return nodes
 
 def getNodes(connectedWalls, sharedPoint, wall1, wall2,  shift=1):
