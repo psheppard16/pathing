@@ -39,21 +39,6 @@ class Path:
         else:
             return None
 
-class Node:
-    def __init__(self, location, nodes, walls):
-        self.location = location
-        self.nodes = nodes
-        self.connected = []
-        for node in nodes:
-            valid = True
-            for wall in walls:
-                if intersect((node.location, self.location), wall):
-                    valid = False
-            if valid:
-                self.connected.append(node)
-                node.connected.append(self)
-        self.nodes.append(self)
-
 def findPath(startPoint, endPoint, wallList):
     nodes = generateNodes(startPoint, endPoint, wallList)
     paths = []
