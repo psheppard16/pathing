@@ -101,6 +101,7 @@ class GameEngine:
         if self.game.saveEngine.saveNumber == 0:
             self.startTime = self.game.frameRateEngine.getTime()
             while self.game.frameRateEngine.getTime() - self.startTime < 1 / 30:
+                #tm.sleep(.1)
                 finalPath = pathing.addPaths(self.paths)
                 if finalPath:
                     fullPath = []

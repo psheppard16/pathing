@@ -13,14 +13,16 @@ class Path:
             self.candidates.remove(self.creator.location)
         else:
             self.length = 0
-        self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint)
+        self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint) + distanceP(self.candidates[0], self.location)
         self.children = []
         self.nodes = nodes
 
     def add(self):
-        self.children.append(Path(self.candidates.pop(0), self, self.endPoint, self.nodes, self.paths))
+        new = Path(self.candidates.pop(0), self, self.endPoint, self.nodes, self.paths)
+        self.children.append(new)
         if self.candidates:
-            self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint)
+            self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint) + distanceP(self.candidates[0], self.location)
+        return new
 
 def findPath(startPoint, endPoint, wallList):
     nodes = generateNodes(startPoint, endPoint, wallList)
@@ -39,11 +41,11 @@ def findPath(startPoint, endPoint, wallList):
 def addPaths(paths):
     pathToAdvance = getPromisingPath(paths)
     if pathToAdvance:
-        pathToAdvance.add()
-        if pathToAdvance.location == pathToAdvance.endPoint:
-            return pathToAdvance
-        else:
-            return None
+        new = pathToAdvance.add()
+        if new.location == pathToAdvance.endPoint:
+            return new
+    else:
+        raise Exception("failed to find path")
 
 def getShortestPath(paths):
     shortest = None
@@ -110,6 +112,38 @@ def generateNodes(startPoint, endPoint, walls):
             ordered.append(wall)
             connected.pop(wall)
         nodes[node1] = ordered
+
+    for node1, connected1 in nodes.items():
+        for node2, connected2 in nodes.items():
+            if node1 != node2:
+                toRemove = []
+                for inner1 in connected1:
+                    for inner2 in connected2:
+                        if inner1 == inner2:
+                            toRemove.append(inner1)
+                for inner in toRemove:
+                    try:
+                        nodes[inner].remove(node1)
+                    except:
+                        pass
+                    try:
+                        nodes[inner].remove(node2)
+                    except:
+                        pass
+                    try:
+                        connected1.remove(inner)
+                    except:
+                        pass
+                    try:
+                        connected2.remove(inner)
+                    except:
+                        pass
+    toDelete = []
+    for node, connected in nodes.items():
+        if not connected:
+            toDelete.append(node)
+    for node in toDelete:
+            del nodes[node]
     return nodes
 
 def getNodes(connectedWalls, sharedPoint, wall1, wall2,  shift=1):

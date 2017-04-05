@@ -20,15 +20,15 @@ class DrawingEngine(CanvasObject):
         return self.game.window.height - y
 
     def draw(self):
-        # for node, connected in self.game.gameEngine.nodes.items():
-        #     self.showCircle(node, 5, (0, 255, 0), shiftPosition=True)
-        #     for node2 in connected:
-        #         self.showLine(node, node2, (255, 0, 0), 1, shiftPosition=True)
+        for node, connected in self.game.gameEngine.nodes.items():
+            self.showCircle(node, 5, (0, 255, 0), shiftPosition=True)
+            for node2 in connected:
+                self.showLine(node, node2, (255, 255, 0), 9, shiftPosition=True)
         for path in self.game.gameEngine.paths:
             if path.creator:
-                self.showLine(path.location, path.creator.location, (255, 0, 0), 2, shiftPosition=True)
+                self.showLine(path.location, path.creator.location, (255, 0, 0), 6, shiftPosition=True)
         for index in range(0, len(self.game.gameEngine.fullPath) - 1):
-            self.showLine(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1], (0, 255, 255), 5, shiftPosition=True)
+            self.showLine(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1], (0, 255, 255), 3, shiftPosition=True)
 
         self.showCircle((self.game.gameEngine.endPoint[0], self.game.gameEngine.endPoint[1]), 15, (0, 255, 0),
                         shiftPosition=True)
