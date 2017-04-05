@@ -3,37 +3,66 @@ import math
 class Path:
     def __init__(self, location, creator, endPoint, nodes, paths):
         self.location = location
-        self.paths = paths
-        self.paths.append(self)
-        self.endPoint = endPoint
         self.creator = creator
+        self.endPoint = endPoint
         self.nodes = nodes
+        self.paths = paths
+        self.children = []
+
+        self.paths.append(self)
         self.candidates = nodes[location][:]
         del self.nodes[self.location]
-        self.children = []
         if self.creator:
             self.length = creator.length + distanceP(creator.location, self.location)
-            self.candidates.remove(self.creator.location)
         else:
             self.length = 0
-        self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint) + distanceP(self.candidates[0], self.location)
+        self.setPromisedLength()
 
     def add(self):
-        next = self.candidates.pop(0)
-        if next in self.nodes:
+        next = self.getNext()
+        if next:
             new = Path(next, self, self.endPoint, self.nodes, self.paths)
             self.children.append(new)
-            if self.candidates:
-                self.promisedLength = self.length + distanceP(self.candidates[0], self.endPoint) + distanceP(self.candidates[0], self.location)
             return new
+
+    def setPromisedLength(self):
+        if self.candidates:
+            self.promisedLength = self.length + \
+                distanceP(self.candidates[0], self.endPoint) + \
+                distanceP(self.candidates[0], self.location)
+
+    def getNext(self):
+        next = self.candidates.pop(0)
+        self.setPromisedLength()
+        if next in self.nodes:
+            return next
+        else:
+            return None
+
+class Node:
+    def __init__(self, location, nodes, walls):
+        self.location = location
+        self.nodes = nodes
+        self.connected = []
+        for node in nodes:
+            valid = True
+            for wall in walls:
+                if intersect((node.location, self.location), wall):
+                    valid = False
+            if valid:
+                self.connected.append(node)
+                node.connected.append(self)
+        self.nodes.append(self)
 
 def findPath(startPoint, endPoint, wallList):
     nodes = generateNodes(startPoint, endPoint, wallList)
     paths = []
-    paths.extend([Path(startPoint, None, endPoint, nodes, paths)])
+    paths.append(Path(startPoint, None, endPoint, nodes, paths))
+
     finalPath = None
     while not finalPath:
         finalPath = addPaths(paths)
+
     fullPath = []
     focus = finalPath
     while focus:
@@ -49,14 +78,6 @@ def addPaths(paths):
             return new
     else:
         raise Exception("failed to find path")
-
-def getShortestPath(paths):
-    shortest = None
-    for path in paths:
-        if path.location == path.endPoint:
-            if not shortest or path.length < shortest.length:
-                shortest = path
-    return shortest
 
 def getPromisingPath(paths):
     shortest = None
@@ -117,7 +138,7 @@ def generateNodes(startPoint, endPoint, walls):
         nodes[node1] = ordered
     return nodes
 
-def getNodes(connectedWalls, sharedPoint, wall1, wall2,  shift=1):
+def getNodes(connectedWalls, sharedPoint, wall1, wall2,  shift=.01):
     first = wall1  # closest wall clockwise
     second = wall2  # closest wall counterclockwise
     bisectorAngle = getBisectorAngle(first, second)  # the bisector line of the two walls

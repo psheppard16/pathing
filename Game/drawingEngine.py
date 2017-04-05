@@ -28,10 +28,10 @@ class DrawingEngine(CanvasObject):
         for wall in self.game.gameEngine.wallList:
             self.showLine(wall[0], wall[1], (0, 0, 0), 10, shiftPosition=True, rounded=True)
 
-        # for node, connected in self.game.gameEngine.nodes.items():
-        #     self.showCircle(node, 5, (0, 255, 0), shiftPosition=True)
-        #     for node2 in connected:
-        #         self.showLine(node, node2, (255, 255, 0), 5, shiftPosition=True)
+        for node, connected in self.game.gameEngine.nodes.items():
+            self.showCircle(node, 5, (0, 255, 0), shiftPosition=True)
+            for node2 in connected:
+                self.showLine(node, node2, (255, 255, 0), 5, shiftPosition=True)
 
         # for path in self.game.gameEngine.paths:
         #     if path.creator:
