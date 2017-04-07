@@ -114,7 +114,7 @@ def generateNodes(startPoint, endPoint, walls):
                     valid = False
                     break
             if valid:
-                connected[node2] = distanceP(node2, endPoint)
+                connected[node2] = distanceP(node2, endPoint) + distanceP(node1, node2)
         ordered = []  # order the walls based on angle to insideLine
         while connected:
             wall = min(connected, key=connected.get)
