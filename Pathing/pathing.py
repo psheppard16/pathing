@@ -1,17 +1,28 @@
 __author__ = 'Preston Sheppard'
 import math
 class Path:
-    def __init__(self, location, creator, endPoint, nodes, paths):
+    def __init__(self, location, creator, endPoint, nodes, walls, paths):
         self.location = location
         self.creator = creator
         self.endPoint = endPoint
         self.nodes = nodes
+        self.walls = walls
         self.paths = paths
         self.children = []
 
         self.paths.append(self)
-        self.candidates = nodes[location][:]
-        del self.nodes[self.location]
+        self.nodes.remove(self.location)
+
+        self.connected = {}
+        for node in nodes:
+            valid = True
+            for wall in walls:
+                if intersect((self.location, node), wall):
+                    valid = False
+                    break
+            if valid:
+                self.connected[node] = distanceP(node, endPoint) + distanceP(node, self.location)
+
         if self.creator:
             self.length = creator.length + distanceP(creator.location, self.location)
         else:
@@ -21,18 +32,20 @@ class Path:
     def add(self):
         next = self.getNext()
         if next:
-            new = Path(next, self, self.endPoint, self.nodes, self.paths)
+            new = Path(next, self, self.endPoint, self.nodes, self.walls, self.paths)
             self.children.append(new)
             return new
 
     def setPromisedLength(self):
-        if self.candidates:
+        if self.connected:
+            next = min(self.connected, key=self.connected.get)
             self.promisedLength = self.length + \
-                distanceP(self.candidates[0], self.endPoint) + \
-                distanceP(self.candidates[0], self.location)
+                distanceP(next, self.endPoint) + \
+                distanceP(next, self.location)
 
     def getNext(self):
-        next = self.candidates.pop(0)
+        next = min(self.connected, key=self.connected.get)
+        self.connected.pop(next)
         self.setPromisedLength()
         if next in self.nodes:
             return next
@@ -42,7 +55,7 @@ class Path:
 def findPath(startPoint, endPoint, wallList):
     nodes = generateNodes(startPoint, endPoint, wallList)
     paths = []
-    paths.append(Path(startPoint, None, endPoint, nodes, paths))
+    paths.append(Path(startPoint, None, endPoint, nodes, wallList, paths))
 
     finalPath = None
     while not finalPath:
@@ -67,12 +80,12 @@ def addPaths(paths):
 def getPromisingPath(paths):
     shortest = None
     for path in paths:
-        if path.candidates and (not shortest or path.promisedLength < shortest.promisedLength):
+        if path.connected and (not shortest or path.promisedLength < shortest.promisedLength):
             shortest = path
     return shortest
 
 def generateNodes(startPoint, endPoint, walls):
-    nodes = {}
+    nodes = []
     for wall in walls:
         for sharedPoint in wall:
             if sharedPoint not in nodes:
@@ -99,31 +112,15 @@ def generateNodes(startPoint, endPoint, walls):
 
                 for index in range(-1, len(ordered) - 1):
                     if 0 < ang(ordered[index + 1], ordered[index]) < math.pi:
-                        nodes[getNodes(ordered, sharedPoint, ordered[index + 1], ordered[index])] = []
-                    nodes[getNodes(ordered, sharedPoint, ordered[index], ordered[index])] = []
+                        nodes.append(getNode(ordered, sharedPoint, ordered[index + 1], ordered[index]))
+                    nodes.append(getNode(ordered, sharedPoint, ordered[index], ordered[index]))
 
-    nodes[startPoint] = []
-    nodes[endPoint] = []
+    nodes.append(startPoint)
+    nodes.append(endPoint)
 
-    for node1 in nodes.keys():
-        connected = {}
-        for node2 in nodes.keys():
-            valid = True
-            for wall in walls:
-                if intersect((node1, node2), wall):
-                    valid = False
-                    break
-            if valid:
-                connected[node2] = distanceP(node2, endPoint) + distanceP(node1, node2)
-        ordered = []  # order the walls based on angle to insideLine
-        while connected:
-            wall = min(connected, key=connected.get)
-            ordered.append(wall)
-            connected.pop(wall)
-        nodes[node1] = ordered
     return nodes
 
-def getNodes(connectedWalls, sharedPoint, wall1, wall2,  shift=.01):
+def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.01):
     first = wall1  # closest wall clockwise
     second = wall2  # closest wall counterclockwise
     bisectorAngle = getBisectorAngle(first, second)  # the bisector line of the two walls

@@ -92,7 +92,7 @@ class GameEngine:
         self.fullPath = []
         self.nodes = pathing.generateNodes(self.startPoint, self.endPoint, self.wallList)
         self.paths = []
-        self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.paths)])
+        self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.wallList, self.paths)])
 
     def run(self):
         if self.game.saveEngine.saveNumber == 0:
@@ -129,7 +129,7 @@ class GameEngine:
 
                     self.nodes = pathing.generateNodes(self.startPoint, self.endPoint, self.wallList)
                     self.paths = []
-                    self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.paths)])
+                    self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.wallList, self.paths)])
                     break
         elif self.game.saveEngine.saveNumber == 1:
             startTime = self.game.frameRateEngine.getTime()
