@@ -9,48 +9,43 @@ class Path:
         self.walls = walls
         self.paths = paths
         self.children = []
-
-        self.paths.append(self)
-        self.nodes.remove(self.location)
-
-        self.connected = {}
-        for node in nodes:
-            valid = True
-            for wall in walls:
-                if intersect((self.location, node), wall):
-                    valid = False
-                    break
-            if valid:
-                self.connected[node] = distanceP(node, endPoint) + distanceP(node, self.location)
-
         if self.creator:
             self.length = creator.length + distanceP(creator.location, self.location)
         else:
             self.length = 0
-        self.setPromisedLength()
+
+        self.paths.append(self)
+        self.nodes.remove(self.location)
+
+        self.connected = sorted(self.nodes, key=lambda x: self.getPromisedLength(x))
+        self.prepareNext()
 
     def add(self):
-        next = self.getNext()
-        if next:
-            new = Path(next, self, self.endPoint, self.nodes, self.walls, self.paths)
-            self.children.append(new)
-            return new
+        if self.connected:
+            next = self.connected.pop(0)
+            self.prepareNext()
+            if next in self.nodes:
+                return Path(next, self, self.endPoint, self.nodes, self.walls, self.paths)
 
     def setPromisedLength(self):
         if self.connected:
-            next = min(self.connected, key=self.connected.get)
-            self.promisedLength = self.length + \
-                distanceP(next, self.endPoint) + \
-                distanceP(next, self.location)
+            self.promisedLength = self.getPromisedLength(self.connected[0])
 
-    def getNext(self):
-        next = min(self.connected, key=self.connected.get)
-        self.connected.pop(next)
+    def prepareNext(self):
+        while self.connected and not self.valid(self.connected[0]):
+            self.connected.pop(0)
         self.setPromisedLength()
-        if next in self.nodes:
-            return next
-        else:
-            return None
+
+    def getPromisedLength(self, node):
+        return self.length + distanceP(node, self.endPoint) + distanceP(node, self.location)
+
+    def valid(self, node):
+        valid = True
+        for wall in self.walls:
+            if intersect((self.location, node), wall):
+                valid = False
+                break
+        return valid
 
 def findPath(startPoint, endPoint, wallList):
     nodes = generateNodes(startPoint, endPoint, wallList)
@@ -86,23 +81,21 @@ def getPromisingPath(paths):
 
 def generateNodes(startPoint, endPoint, walls):
     nodes = []
+    sharedPoints = []
     for wall in walls:
         for sharedPoint in wall:
-            if sharedPoint not in nodes:
-                toAdd = []
+            if sharedPoint not in sharedPoints:
+                sharedPoints.append(sharedPoint)
+                angles = {}
                 for wall in walls:
                     if sharedPoint in wall:
-                        toAdd.append(wall)
-
-                angles = {}
-                for wall in toAdd:
-                    for index, point in enumerate(wall):
-                        if point == sharedPoint:
-                            wall = (sharedPoint, wall[index - 1])
-                            angle = ang(((0, 0), (1, 0)), wall)
-                            if angle < 0:
-                                angle += math.pi * 2
-                            angles[wall] = angle
+                        for index, point in enumerate(wall):
+                            if point == sharedPoint:
+                                wall = (sharedPoint, wall[index - 1])
+                                angle = ang(((0, 0), (1, 0)), wall)
+                                if angle < 0:
+                                    angle += math.pi * 2
+                                angles[wall] = angle
 
                 ordered = []
                 while angles:
@@ -112,15 +105,19 @@ def generateNodes(startPoint, endPoint, walls):
 
                 for index in range(-1, len(ordered) - 1):
                     if 0 < ang(ordered[index + 1], ordered[index]) < math.pi:
-                        nodes.append(getNode(ordered, sharedPoint, ordered[index + 1], ordered[index]))
-                    nodes.append(getNode(ordered, sharedPoint, ordered[index], ordered[index]))
+                        node = getNode(ordered, sharedPoint, ordered[index + 1], ordered[index])
+                        if node and node not in nodes:
+                            nodes.append(node)
+                    node = getNode(ordered, sharedPoint, ordered[index], ordered[index])
+                    if node and node not in nodes:
+                        nodes.append(node)
 
     nodes.append(startPoint)
     nodes.append(endPoint)
 
     return nodes
 
-def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.01):
+def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.1):
     first = wall1  # closest wall clockwise
     second = wall2  # closest wall counterclockwise
     bisectorAngle = getBisectorAngle(first, second)  # the bisector line of the two walls
@@ -172,8 +169,7 @@ def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.01):
     if first2 == first and second2 == second:
         return point2
 
-    return (0, 0)
-    #raise Exception("failed to find snap point")
+    return None
 
 def getBisectorAngle(line1, line2):
     x1 = line1[0][0] - line1[1][0]
