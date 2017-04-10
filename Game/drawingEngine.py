@@ -26,16 +26,16 @@ class DrawingEngine(CanvasObject):
                         15, (0, 255, 0), shiftPosition=True)
 
         for wall in self.game.gameEngine.wallList:
-            self.showLine(wall[0], wall[1], (0, 0, 0), 10, shiftPosition=True, rounded=True)
+            self.showLine(wall[0], wall[1], (0, 0, 0), 5, shiftPosition=True, rounded=True)
 
         # for node in self.game.gameEngine.nodes:
         #     self.showCircle(node, 5, (0, 255, 0), shiftPosition=True)
 
-        # for path in self.game.gameEngine.paths:
-        #     if path.creator:
-        #         self.showLine(path.location, path.creator.location, (255, 255, 0), 8, shiftPosition=True)
+        for path in self.game.gameEngine.paths:
+            if path.creator:
+                self.showLine(path.location, path.creator.location, (255, 255, 0), 6, shiftPosition=True)
 
         for index in range(0, len(self.game.gameEngine.fullPath) - 1):
-            self.showLine(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1], (255, 0, 0), 4, shiftPosition=True)
+            self.showLine(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1], (255, 0, 0), 3, shiftPosition=True)
 
 

@@ -95,6 +95,16 @@ class GameEngine:
         self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.wallList, self.paths)])
 
     def run(self):
+        mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
+        if mouseX > self.game.window.width - self.indent - 1:
+            mouseX = self.game.window.width - self.indent - 1
+        if mouseX < self.indent + 1:
+            mouseX = self.indent + 1
+        mouseY = self.game.window.height - (self.game.window.root.winfo_pointery() - self.game.window.root.winfo_rooty())
+        if mouseY > self.game.window.height - self.indent - 1:
+            mouseY = self.game.window.height - self.indent - 1
+        if mouseY < self.indent + 1:
+            mouseY = self.indent + 1
         if self.game.saveEngine.saveNumber == 0:
             self.startTime = self.game.frameRateEngine.getTime()
             while self.game.frameRateEngine.getTime() - self.startTime < 1 / 30:
@@ -106,16 +116,6 @@ class GameEngine:
                         fullPath.append(focus.location)
                         focus = focus.creator
                     self.fullPath = fullPath
-                    mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
-                    if mouseX > self.game.window.width - self.indent - 1:
-                        mouseX = self.game.window.width - self.indent - 1
-                    if mouseX < self.indent + 1:
-                        mouseX = self.indent + 1
-                    mouseY = self.game.window.height - (self.game.window.root.winfo_pointery() - self.game.window.root.winfo_rooty())
-                    if mouseY > self.game.window.height - self.indent - 1:
-                        mouseY = self.game.window.height - self.indent - 1
-                    if mouseY < self.indent + 1:
-                        mouseY = self.indent + 1
                     self.endPoint = (mouseX, mouseY)
                     self.endTime = self.game.frameRateEngine.getTime()
                     time = self.endTime - self.startTime
@@ -134,16 +134,6 @@ class GameEngine:
         elif self.game.saveEngine.saveNumber == 1:
             startTime = self.game.frameRateEngine.getTime()
             self.fullPath = pathing.findPath(self.startPoint, self.endPoint, self.wallList)
-            mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
-            if mouseX > self.game.window.width - self.indent - 1:
-                mouseX = self.game.window.width - self.indent - 1
-            if mouseX < self.indent + 1:
-                mouseX = self.indent + 1
-            mouseY = self.game.window.height - (self.game.window.root.winfo_pointery() - self.game.window.root.winfo_rooty())
-            if mouseY > self.game.window.height - self.indent - 1:
-                mouseY = self.game.window.height - self.indent - 1
-            if mouseY < self.indent + 1:
-                mouseY = self.indent + 1
             self.endPoint = (mouseX, mouseY)
             endTime = self.game.frameRateEngine.getTime()
             print("Time:", endTime - startTime)

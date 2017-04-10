@@ -17,21 +17,13 @@ class Options(Screen):
                                   bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
         self.generateB.pack(in_=self.f, pady=15)
 
-        self.pathResolutionL = Label(self.game.window.root, text="Path Resolution", bg="#%02x%02x%02x" % (255, 165, 0),
-                                     font="Helvetica 15 bold", padx=10, pady=10)
-        self.pathResolutionL.pack(in_=self.f)
-        self.pathResolutionB = Spinbox(self.game.window.root, from_=1, to=1000, bg="#%02x%02x%02x" % (255, 165, 0),
-                                       font="Helvetica 15 bold")
-        self.pathResolutionB.delete(0, "end")
-        self.pathResolutionB.pack(in_=self.f)
-
-        self.angleResolutionL = Label(self.game.window.root, text="Angle Resolution",
-                                      bg="#%02x%02x%02x" % (255, 165, 0), font="Helvetica 15 bold", padx=10, pady=10)
-        self.angleResolutionL.pack(in_=self.f)
-        self.angleResolutionB = Spinbox(self.game.window.root, from_=1, to=1000, bg="#%02x%02x%02x" % (255, 165, 0),
-                                        font="Helvetica 15 bold")
-        self.angleResolutionB.delete(0, "end")
-        self.angleResolutionB.pack(in_=self.f)
+        self.mazeSizeL = Label(self.game.window.root, text="Maze Size", bg="#%02x%02x%02x" % (255, 165, 0),
+                               font="Helvetica 15 bold", padx=10, pady=10)
+        self.mazeSizeL.pack(in_=self.f)
+        self.mazeSizeB = Spinbox(self.game.window.root, from_=1, to=5, state="readonly", bg="#%02x%02x%02x" % (255, 165, 0),
+                                 font="Helvetica 15 bold")
+        self.mazeSizeB.delete(0, "end")
+        self.mazeSizeB.pack(in_=self.f)
 
         self.wallTypeF = StringVar()
         self.wallTypeF.set("Wall Type: " + self.game.saveEngine.save.wallType)
@@ -60,8 +52,8 @@ class Options(Screen):
         self.game.window.root.destroy()
 
     def generate(self):
-        indent = 20
-        walls = gs.generateSquareMaze(16, 9, (self.game.window.height - indent) / 9, location=(indent/2, indent/2))
+        indent = self.game.gameEngine.indent / 2
+        walls = gs.generateSquareMaze(16 * int(self.mazeSizeB.get()), 9 * int(self.mazeSizeB.get()), (self.game.window.height - indent) / 9 / int(self.mazeSizeB.get()), location=(indent/2, indent/2))
         with open('Maze/maze.json', 'w') as outfile:
             json.dump(walls, outfile)
 
@@ -73,19 +65,15 @@ class Options(Screen):
 
         self.resolutionF.set("Resolution: " + self.game.saveEngine.save.resolution)
 
-        self.pathResolutionB.delete(0, "end")
-        self.pathResolutionB.insert(0, self.game.saveEngine.save.pathResolution)
-
-        self.angleResolutionB.delete(0, "end")
-        self.angleResolutionB.insert(0, self.game.saveEngine.save.angleResolution)
+        self.mazeSizeB.delete(0, "end")
+        self.mazeSizeB.insert(0, self.game.saveEngine.save.mazeSize)
 
         self.wallTypeF.set("Wall Type: " + self.game.saveEngine.save.wallType)
 
         self.f.pack(side=LEFT)
 
     def accept(self):
-        self.game.saveEngine.save.pathResolution = int(self.pathResolutionB.get())
-        self.game.saveEngine.save.angleResolution = int(self.angleResolutionB.get())
+        self.game.saveEngine.save.mazeSize = int(self.mazeSizeB.get())
         self.game.saveEngine.saveCharacter(self.game.saveEngine.saveNumber)
         self.game.screenEngine.rMenu = "mainMenu"
 
