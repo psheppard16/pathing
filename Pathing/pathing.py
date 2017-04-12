@@ -1,12 +1,13 @@
 __author__ = 'Preston Sheppard'
 import math
 class Path:
-    def __init__(self, location, creator, endPoint, nodes, walls, paths):
+    def __init__(self, location, creator, endPoint, nodes, walls, paths, zones):
         self.location = location
         self.creator = creator
         self.endPoint = endPoint
         self.nodes = nodes
         self.walls = walls
+        self.zones = zones
         self.paths = paths
         self.children = []
         if self.creator:
@@ -25,7 +26,7 @@ class Path:
             next = self.connected.pop(0)
             self.prepareNext()
             if next in self.nodes:
-                return Path(next, self, self.endPoint, self.nodes, self.walls, self.paths)
+                return Path(next, self, self.endPoint, self.nodes, self.walls, self.paths, self.zones)
 
     def setPromisedLength(self):
         if self.connected:
@@ -40,17 +41,119 @@ class Path:
         return self.length + distanceP(node, self.endPoint) + distanceP(node, self.location)
 
     def valid(self, node):
+        toCheck = self.getZoneWalls(node)
         valid = True
-        for wall in self.walls:
+        for wall in toCheck:
             if intersect((self.location, node), wall):
                 valid = False
                 break
         return valid
 
+    def getZoneWalls(self, node):
+        zoneWalls = []
+        bPoints = bresenham(self.location, node)
+        for point in bPoints:
+            if point in self.zones:
+                newWalls = self.zones[point]
+                zoneWalls = zoneWalls + list(set(newWalls) - set(zoneWalls))
+        print(len(zoneWalls), len(self.walls))
+        return zoneWalls
+
+def switch_octant_to_zero(octant, x, y):
+   if octant == 0: return (x, y)
+   if octant == 1: return (y, x)
+   if octant == 2: return (y, -x)
+   if octant == 3: return (-x, y)
+   if octant == 4: return (-x, -y)
+   if octant == 5: return (-y, -x)
+   if octant == 6: return (-y, x)
+   if octant == 7: return (x, -y)
+
+def switch_octant_from_zero(octant, x, y):
+   if octant == 0: return (x, y)
+   if octant == 1: return (y, x)
+   if octant == 2: return (-y, x)
+   if octant == 3: return (-x, y)
+   if octant == 4: return (-x, -y)
+   if octant == 5: return (-y, -x)
+   if octant == 6: return (y, -x)
+   if octant == 7: return (x, -y)
+
+def get_octant(A, B):
+    dx, dy = B[0] - A[0], B[1] - A[1]
+    octant = 0
+    if dy < 0:
+        dx, dy = -dx, -dy  # rotate by 180 degrees
+        octant += 4
+    if dx < 0:
+        dx, dy = dy, -dx  # rotate clockwise by 90 degrees
+        octant += 2
+    if dx < dy:
+        # no need to rotate now
+        octant += 1
+    return octant
+
+def bresenham(point1, point2, gridSize=100):
+    x1, y1 = (int(point1[0] / gridSize), int(point1[1] / gridSize))
+    x2, y2 = (int(point2[0] / gridSize), int(point2[1] / gridSize))
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # Determine how steep the line is
+    is_steep = abs(dy) > abs(dx)
+
+    # Rotate line
+    if is_steep:
+        x1, y1 = y1, x1
+        x2, y2 = y2, x2
+
+    # Swap start and end points if necessary and store swap state
+    swapped = False
+    if x1 > x2:
+        x1, x2 = x2, x1
+        y1, y2 = y2, y1
+        swapped = True
+
+    # Recalculate differentials
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # Calculate error
+    error = int(dx / 2.0)
+    ystep = 1 if y1 < y2 else -1
+
+    # Iterate over bounding box generating points between start and end
+    y = y1
+    points = []
+    for x in range(x1, x2 + 1):
+        coord = (y, x) if is_steep else (x, y)
+        points.append(coord)
+
+        coord = (y, x + 1) if is_steep else (x, y + 1)
+        points.append(coord)
+
+        coord = (y, x - 1) if is_steep else (x, y - 1)
+        points.append(coord)
+
+        error -= abs(dy)
+        if error < 0:
+            y += ystep
+            error += dx
+    return points
+
 def findPath(startPoint, endPoint, wallList):
+    zones = {}
+    for wall in wallList:
+        bPoints = bresenham(wall[0], wall[1])
+        for point in bPoints:
+                if point in zones:
+                    zones[point].append(wall)
+                else:
+                    zones[point] = [wall]
+
     nodes = generateNodes(startPoint, endPoint, wallList)
     paths = []
-    paths.append(Path(startPoint, None, endPoint, nodes, wallList, paths))
+    paths.append(Path(startPoint, None, endPoint, nodes, wallList, paths, zones))
 
     finalPath = None
     while not finalPath:

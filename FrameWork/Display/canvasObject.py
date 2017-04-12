@@ -117,7 +117,6 @@ class CanvasObject(Screen, metaclass=ABCMeta):
 
         :return: None
         """
-        show = True
         if shiftPosition:
             x1 = int((self.getScreenX(position1[0])))
             y1 = int((self.getScreenY(position1[1])))
@@ -128,26 +127,15 @@ class CanvasObject(Screen, metaclass=ABCMeta):
             y1 = int(position1[1])
             x2 = int(position2[0])
             y2 = int(position2[1])
-
-        if x1 > self.game.window.width:
-            show = False
-        if x2 < 0:
-            show = False
-        if y1 > self.game.window.height:
-            show = False
-        if y2 < 0:
-            show = False
-
-        if show:
-            if self.usePygame:
-                pygame.draw.rect(self.display, color, ((int(x1), int(y1)), (int(x2 - x1), int(y2 - y1))))
-                if width != 0:
-                    pygame.draw.rect(self.display, secondaryColor, ((int(x1), int(y1)), (int(x2 - x1), int(y2 - y1))),
-                                     int(width))
-            else:
-                tk_rgb = "#%02x%02x%02x" % color
-                secondary_tk_rgb = "#%02x%02x%02x" % secondaryColor
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill=tk_rgb, width=width, outline=secondary_tk_rgb)
+        if self.usePygame:
+            pygame.draw.rect(self.display, color, ((int(x1), int(y1)), (int(x2 - x1), int(y2 - y1))))
+            if width != 0:
+                pygame.draw.rect(self.display, secondaryColor, ((int(x1), int(y1)), (int(x2 - x1), int(y2 - y1))),
+                                 int(width))
+        else:
+            tk_rgb = "#%02x%02x%02x" % color
+            secondary_tk_rgb = "#%02x%02x%02x" % secondaryColor
+            self.canvas.create_rectangle(x1, y1, x2, y2, fill=tk_rgb, width=width, outline=secondary_tk_rgb)
 
     def showLine(self, position1, position2, color, width, shiftPosition=False, rounded=False):
         """
