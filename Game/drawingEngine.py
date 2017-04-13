@@ -26,22 +26,21 @@ class DrawingEngine(CanvasObject):
         #         self.showRectangle((point[0] * 100, point[1] * 100), (point[0] * 100 + 100, point[1] * 100 + 100),
         #                            (165, 255, 165), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
         #
-        for index in range(0, len(self.game.gameEngine.fullPath) - 1):
-            bPoints = bresenham(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1])
-            for point in bPoints:
-                self.showRectangle((point[0] * 100, point[1] * 100), (point[0] * 100 + 100, point[1] * 100 + 100),
-                                   (255, 165, 165), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
-
-        # for index in range(0, len(self.game.gameEngine.fullPath) - 1):
-        #     bPoints = bresenham(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1])
-        #     for point in bPoints:
-        #         self.showCircle((point[0] * 100, point[1] * 100), 10, (255, 165, 0), shiftPosition=True)
-
-
         self.showCircle((self.game.gameEngine.endPoint[0], self.game.gameEngine.endPoint[1]), 15, (0, 255, 0),
                         shiftPosition=True)
         self.showCircle((self.game.gameEngine.startPoint[0], self.game.gameEngine.startPoint[1]),
                         15, (0, 255, 0), shiftPosition=True)
+
+        for index in range(0, len(self.game.gameEngine.fullPath) - 1):
+            bPoints = bresenham(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1])
+            for point in bPoints:
+                self.showRectangle((point[0] * 10 - 5, point[1] * 10 - 5), (point[0] * 10 + 5, point[1] * 10 + 5),
+                                   (255, 165, 165), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
+
+        for index in range(0, len(self.game.gameEngine.fullPath) - 1):
+            bPoints = bresenham(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1])
+            for point in bPoints:
+                self.showCircle((point[0] * 100, point[1] * 100), 10, (255, 165, 0), shiftPosition=True)
 
         for wall in self.game.gameEngine.wallList:
             self.showLine(wall[0], wall[1], (0, 0, 0), 5, shiftPosition=True, rounded=True)
@@ -92,9 +91,9 @@ def get_octant(A, B):
         octant += 1
     return octant
 
-def bresenham(point1, point2, gridSize=100):
-    x1, y1 = (int(point1[0] / gridSize), int(point1[1] / gridSize))
-    x2, y2 = (int(point2[0] / gridSize), int(point2[1] / gridSize))
+def bresenham(point1, point2, gridSize=10):
+    x1, y1 = (int(round(point1[0] / gridSize)), int(round(point1[1] / gridSize)))
+    x2, y2 = (int(round(point2[0] / gridSize)), int(round(point2[1] / gridSize)))
     dx = x2 - x1
     dy = y2 - y1
 
@@ -128,14 +127,12 @@ def bresenham(point1, point2, gridSize=100):
         coord = (y, x) if is_steep else (x, y)
         points.append(coord)
 
-        coord = (y, x + 1) if is_steep else (x, y + 1)
-        points.append(coord)
-
-        coord = (y, x - 1) if is_steep else (x, y - 1)
-        points.append(coord)
-
         error -= abs(dy)
         if error < 0:
+            coord = (y, x + 1) if is_steep else (x + 1, y)
+            points.append(coord)
             y += ystep
+            coord = (y, x) if is_steep else (x, y)
+            points.append(coord)
             error += dx
     return points

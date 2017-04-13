@@ -56,7 +56,6 @@ class Path:
             if point in self.zones:
                 newWalls = self.zones[point]
                 zoneWalls = zoneWalls + list(set(newWalls) - set(zoneWalls))
-        print(len(zoneWalls), len(self.walls))
         return zoneWalls
 
 def switch_octant_to_zero(octant, x, y):
@@ -93,9 +92,9 @@ def get_octant(A, B):
         octant += 1
     return octant
 
-def bresenham(point1, point2, gridSize=100):
-    x1, y1 = (int(point1[0] / gridSize), int(point1[1] / gridSize))
-    x2, y2 = (int(point2[0] / gridSize), int(point2[1] / gridSize))
+def bresenham(point1, point2, gridSize=10):
+    x1, y1 = (int(round(point1[0] / gridSize)), int(round(point1[1] / gridSize)))
+    x2, y2 = (int(round(point2[0] / gridSize)), int(round(point2[1] / gridSize)))
     dx = x2 - x1
     dy = y2 - y1
 
@@ -129,15 +128,13 @@ def bresenham(point1, point2, gridSize=100):
         coord = (y, x) if is_steep else (x, y)
         points.append(coord)
 
-        coord = (y, x + 1) if is_steep else (x, y + 1)
-        points.append(coord)
-
-        coord = (y, x - 1) if is_steep else (x, y - 1)
-        points.append(coord)
-
         error -= abs(dy)
         if error < 0:
+            coord = (y, x + 1) if is_steep else (x + 1, y)
+            points.append(coord)
             y += ystep
+            coord = (y, x) if is_steep else (x, y)
+            points.append(coord)
             error += dx
     return points
 
