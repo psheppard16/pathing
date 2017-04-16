@@ -16,16 +16,18 @@ class Path:
             self.length = 0
 
         self.paths.append(self)
-        self.nodes.remove(self.location)
 
-        self.connected = sorted(self.nodes, key=lambda x: self.getPromisedLength(x))
+        self.nodes[getPixel(self.location)].remove(self.location)
+
+        #self.connected = sorted(self.nodes, key=lambda x: self.getPromisedLength(x))
+        self.connected = self.getSeen()
         self.prepareNext()
 
-    def add(self):
+    def add(self, gridSize=10):
         if self.connected:
             next = self.connected.pop(0)
             self.prepareNext()
-            if next in self.nodes:
+            if next in self.nodes[getPixel(next, gridSize=gridSize)]:
                 return Path(next, self, self.endPoint, self.nodes, self.walls, self.paths, self.zones)
 
     def setPromisedLength(self):
@@ -57,6 +59,20 @@ class Path:
                 newWalls = self.zones[point]
                 zoneWalls = zoneWalls + list(set(newWalls) - set(zoneWalls))
         return zoneWalls
+
+    def getSeen(self, gridSize=10):
+        seen = []
+        seenPixels = circleFlood(self.location, self.zones, gridSize=gridSize)
+        if seenPixels:
+            for pixel in seenPixels:
+                if pixel in self.nodes:
+                    seen.extend(self.nodes[pixel])
+            return sorted(seen, key=lambda x: self.getPromisedLength(x))
+        else:
+            allNodes = []
+            for list in self.nodes.values():
+                allNodes.extend(list)
+            return sorted(allNodes, key=lambda x: self.getPromisedLength(x))
 
 def switch_octant_to_zero(octant, x, y):
    if octant == 0: return (x, y)
@@ -93,8 +109,8 @@ def get_octant(A, B):
     return octant
 
 def bresenham(point1, point2, gridSize=10):
-    x1, y1 = (int(round(point1[0] / gridSize)), int(round(point1[1] / gridSize)))
-    x2, y2 = (int(round(point2[0] / gridSize)), int(round(point2[1] / gridSize)))
+    x1, y1 = getPixel(point1, gridSize=gridSize)
+    x2, y2 = getPixel(point2, gridSize=gridSize)
     dx = x2 - x1
     dy = y2 - y1
 
@@ -138,6 +154,86 @@ def bresenham(point1, point2, gridSize=10):
             error += dx
     return points
 
+def getPixel(point, gridSize=10):
+    return (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
+
+def getLastBresenham(start, end):
+    x1, y1 = start
+    x2, y2 = end
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # Determine how steep the line is
+    is_steep = abs(dy) > abs(dx)
+
+    # Rotate line
+    if is_steep:
+        x1, y1, x2, y2 = y1, x1, y2, x2
+
+    # Swap start and end points if necessary and store swap state
+    if x1 > x2:
+        x1, x2, y1, y2 = x2, x1, y2, y1
+
+    # Recalculate differentials
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # Calculate error
+    error = int(dx / 2.0)
+    ystep = 1 if y1 < y2 else -1
+
+    # Iterate over bounding box generating points between start and end
+    y = y1
+    points = []
+    for x in range(x1, x2 + 1):
+        coord = (y, x) if is_steep else (x, y)
+        points.append(coord)
+
+        error -= abs(dy)
+        if error < 0:
+            y += ystep
+            error += dx
+    if points[0] == end:
+        return points[1:4]
+    elif points[0] == start:
+        return points[-5:-2]
+    raise Exception("could not find last")
+
+def circleFlood(point, zones, gridSize=10, maxLayers=35):
+    start = (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
+    layer = 0
+    valid = {}
+    valid[start] = None
+    added = True
+    while added:
+        added = False
+        layer += 1
+        if layer > maxLayers:
+            return None
+        for i in range(-layer, layer + 1):
+            for j in range(-layer, layer + 1):
+                if abs(i) == layer or abs(j) == layer:
+                    square = (start[0] + i, start[1] + j)
+                    pixels = getLastBresenham(start, square)
+                    offLine = 0
+                    containsWall = 0
+                    for toCheck in pixels:
+                        if toCheck not in valid:
+                            offLine += 1
+                        elif valid[toCheck]:
+                            containsWall += 1
+                    if offLine == 0:
+                        if square in zones:
+                            added = True
+                            valid[square] = zones[square]
+                        elif containsWall == 0:
+                            added = True
+                            valid[square] = []
+                    elif containsWall >= 2:
+                        if square in zones:
+                            valid[square] = zones[square]
+    return valid
+
 def findPath(startPoint, endPoint, wallList):
     zones = {}
     for wall in wallList:
@@ -179,8 +275,8 @@ def getPromisingPath(paths):
             shortest = path
     return shortest
 
-def generateNodes(startPoint, endPoint, walls):
-    nodes = []
+def generateNodes(startPoint, endPoint, walls, gridSize=10):
+    nodes = {}
     sharedPoints = []
     for wall in walls:
         for sharedPoint in wall:
@@ -207,17 +303,34 @@ def generateNodes(startPoint, endPoint, walls):
                     if 0 < ang(ordered[index + 1], ordered[index]) < math.pi:
                         node = getNode(ordered, sharedPoint, ordered[index + 1], ordered[index])
                         if node and node not in nodes:
-                            nodes.append(node)
+                            pixel = getPixel(node, gridSize=gridSize)
+                            if pixel in nodes:
+                                nodes[pixel].append(node)
+                            else:
+                                nodes[pixel] = [node]
                     node = getNode(ordered, sharedPoint, ordered[index], ordered[index])
                     if node and node not in nodes:
-                        nodes.append(node)
+                        pixel = getPixel(node, gridSize=gridSize)
+                        if pixel in nodes:
+                            nodes[pixel].append(node)
+                        else:
+                            nodes[pixel] = [node]
 
-    nodes.append(startPoint)
-    nodes.append(endPoint)
+    pixel = getPixel(startPoint, gridSize=gridSize)
+    if pixel in nodes:
+        nodes[pixel].append(startPoint)
+    else:
+        nodes[pixel] = [startPoint]
+
+    pixel = getPixel(endPoint, gridSize=gridSize)
+    if pixel in nodes:
+        nodes[pixel].append(endPoint)
+    else:
+        nodes[pixel] = [endPoint]
 
     return nodes
 
-def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.1):
+def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.000001):
     first = wall1  # closest wall clockwise
     second = wall2  # closest wall counterclockwise
     bisectorAngle = getBisectorAngle(first, second)  # the bisector line of the two walls
