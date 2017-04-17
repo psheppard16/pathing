@@ -1,5 +1,6 @@
 __author__ = 'Preston Sheppard'
 import math
+import Pathing.geometry as geo
 class Path:
     def __init__(self, location, creator, endPoint, nodes, walls, paths, zones):
         self.location = location
@@ -11,13 +12,13 @@ class Path:
         self.paths = paths
         self.children = []
         if self.creator:
-            self.length = creator.length + distanceP(creator.location, self.location)
+            self.length = creator.length + geo.distanceP(creator.location, self.location)
         else:
             self.length = 0
 
         self.paths.append(self)
 
-        self.nodes[getPixel(self.location)].remove(self.location)
+        self.nodes[geo.getPixel(self.location)].remove(self.location)
 
         #self.connected = sorted(self.nodes, key=lambda x: self.getPromisedLength(x))
         self.connected = self.getSeen()
@@ -27,7 +28,7 @@ class Path:
         if self.connected:
             next = self.connected.pop(0)
             self.prepareNext()
-            if next in self.nodes[getPixel(next, gridSize=gridSize)]:
+            if next in self.nodes[geo.getPixel(next, gridSize=gridSize)]:
                 return Path(next, self, self.endPoint, self.nodes, self.walls, self.paths, self.zones)
 
     def setPromisedLength(self):
@@ -40,20 +41,20 @@ class Path:
         self.setPromisedLength()
 
     def getPromisedLength(self, node):
-        return self.length + distanceP(node, self.endPoint) + distanceP(node, self.location)
+        return self.length + geo.distanceP(node, self.endPoint) + geo.distanceP(node, self.location)
 
     def valid(self, node):
         toCheck = self.getZoneWalls(node)
         valid = True
         for wall in toCheck:
-            if intersect((self.location, node), wall):
+            if geo.intersect((self.location, node), wall):
                 valid = False
                 break
         return valid
 
     def getZoneWalls(self, node):
         zoneWalls = []
-        bPoints = bresenham(self.location, node)
+        bPoints = geo.bresenham(self.location, node)
         for point in bPoints:
             if point in self.zones:
                 newWalls = self.zones[point]
@@ -61,9 +62,9 @@ class Path:
         return zoneWalls
 
     def getSeen(self, gridSize=10):
-        seen = []
-        seenPixels = circleFlood(self.location, self.zones, gridSize=gridSize)
+        seenPixels = geo.circleFlood(self.location, self.zones, gridSize=gridSize)
         if seenPixels:
+            seen = []
             for pixel in seenPixels:
                 if pixel in self.nodes:
                     seen.extend(self.nodes[pixel])
@@ -74,170 +75,10 @@ class Path:
                 allNodes.extend(list)
             return sorted(allNodes, key=lambda x: self.getPromisedLength(x))
 
-def switch_octant_to_zero(octant, x, y):
-   if octant == 0: return (x, y)
-   if octant == 1: return (y, x)
-   if octant == 2: return (y, -x)
-   if octant == 3: return (-x, y)
-   if octant == 4: return (-x, -y)
-   if octant == 5: return (-y, -x)
-   if octant == 6: return (-y, x)
-   if octant == 7: return (x, -y)
-
-def switch_octant_from_zero(octant, x, y):
-   if octant == 0: return (x, y)
-   if octant == 1: return (y, x)
-   if octant == 2: return (-y, x)
-   if octant == 3: return (-x, y)
-   if octant == 4: return (-x, -y)
-   if octant == 5: return (-y, -x)
-   if octant == 6: return (y, -x)
-   if octant == 7: return (x, -y)
-
-def get_octant(A, B):
-    dx, dy = B[0] - A[0], B[1] - A[1]
-    octant = 0
-    if dy < 0:
-        dx, dy = -dx, -dy  # rotate by 180 degrees
-        octant += 4
-    if dx < 0:
-        dx, dy = dy, -dx  # rotate clockwise by 90 degrees
-        octant += 2
-    if dx < dy:
-        # no need to rotate now
-        octant += 1
-    return octant
-
-def bresenham(point1, point2, gridSize=10):
-    x1, y1 = getPixel(point1, gridSize=gridSize)
-    x2, y2 = getPixel(point2, gridSize=gridSize)
-    dx = x2 - x1
-    dy = y2 - y1
-
-    # Determine how steep the line is
-    is_steep = abs(dy) > abs(dx)
-
-    # Rotate line
-    if is_steep:
-        x1, y1 = y1, x1
-        x2, y2 = y2, x2
-
-    # Swap start and end points if necessary and store swap state
-    swapped = False
-    if x1 > x2:
-        x1, x2 = x2, x1
-        y1, y2 = y2, y1
-        swapped = True
-
-    # Recalculate differentials
-    dx = x2 - x1
-    dy = y2 - y1
-
-    # Calculate error
-    error = int(dx / 2.0)
-    ystep = 1 if y1 < y2 else -1
-
-    # Iterate over bounding box generating points between start and end
-    y = y1
-    points = []
-    for x in range(x1, x2 + 1):
-        coord = (y, x) if is_steep else (x, y)
-        points.append(coord)
-
-        error -= abs(dy)
-        if error < 0:
-            coord = (y, x + 1) if is_steep else (x + 1, y)
-            points.append(coord)
-            y += ystep
-            coord = (y, x) if is_steep else (x, y)
-            points.append(coord)
-            error += dx
-    return points
-
-def getPixel(point, gridSize=10):
-    return (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
-
-def getLastBresenham(start, end):
-    x1, y1 = start
-    x2, y2 = end
-    dx = x2 - x1
-    dy = y2 - y1
-
-    # Determine how steep the line is
-    is_steep = abs(dy) > abs(dx)
-
-    # Rotate line
-    if is_steep:
-        x1, y1, x2, y2 = y1, x1, y2, x2
-
-    # Swap start and end points if necessary and store swap state
-    if x1 > x2:
-        x1, x2, y1, y2 = x2, x1, y2, y1
-
-    # Recalculate differentials
-    dx = x2 - x1
-    dy = y2 - y1
-
-    # Calculate error
-    error = int(dx / 2.0)
-    ystep = 1 if y1 < y2 else -1
-
-    # Iterate over bounding box generating points between start and end
-    y = y1
-    points = []
-    for x in range(x1, x2 + 1):
-        coord = (y, x) if is_steep else (x, y)
-        points.append(coord)
-
-        error -= abs(dy)
-        if error < 0:
-            y += ystep
-            error += dx
-    if points[0] == end:
-        return points[1:4]
-    elif points[0] == start:
-        return points[-5:-2]
-    raise Exception("could not find last")
-
-def circleFlood(point, zones, gridSize=10, maxLayers=35):
-    start = (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
-    layer = 0
-    valid = {}
-    valid[start] = None
-    added = True
-    while added:
-        added = False
-        layer += 1
-        if layer > maxLayers:
-            return None
-        for i in range(-layer, layer + 1):
-            for j in range(-layer, layer + 1):
-                if abs(i) == layer or abs(j) == layer:
-                    square = (start[0] + i, start[1] + j)
-                    pixels = getLastBresenham(start, square)
-                    offLine = 0
-                    containsWall = 0
-                    for toCheck in pixels:
-                        if toCheck not in valid:
-                            offLine += 1
-                        elif valid[toCheck]:
-                            containsWall += 1
-                    if offLine == 0:
-                        if square in zones:
-                            added = True
-                            valid[square] = zones[square]
-                        elif containsWall == 0:
-                            added = True
-                            valid[square] = []
-                    elif containsWall >= 2:
-                        if square in zones:
-                            valid[square] = zones[square]
-    return valid
-
 def findPath(startPoint, endPoint, wallList):
     zones = {}
     for wall in wallList:
-        bPoints = bresenham(wall[0], wall[1])
+        bPoints = geo.bresenham(wall[0], wall[1])
         for point in bPoints:
                 if point in zones:
                     zones[point].append(wall)
@@ -288,7 +129,7 @@ def generateNodes(startPoint, endPoint, walls, gridSize=10):
                         for index, point in enumerate(wall):
                             if point == sharedPoint:
                                 wall = (sharedPoint, wall[index - 1])
-                                angle = ang(((0, 0), (1, 0)), wall)
+                                angle = geo.ang(((0, 0), (1, 0)), wall)
                                 if angle < 0:
                                     angle += math.pi * 2
                                 angles[wall] = angle
@@ -300,29 +141,29 @@ def generateNodes(startPoint, endPoint, walls, gridSize=10):
                     angles.pop(wall)
 
                 for index in range(-1, len(ordered) - 1):
-                    if 0 < ang(ordered[index + 1], ordered[index]) < math.pi:
+                    if 0 < geo.ang(ordered[index + 1], ordered[index]) < math.pi:
                         node = getNode(ordered, sharedPoint, ordered[index + 1], ordered[index])
                         if node and node not in nodes:
-                            pixel = getPixel(node, gridSize=gridSize)
+                            pixel = geo.getPixel(node, gridSize=gridSize)
                             if pixel in nodes:
                                 nodes[pixel].append(node)
                             else:
                                 nodes[pixel] = [node]
                     node = getNode(ordered, sharedPoint, ordered[index], ordered[index])
                     if node and node not in nodes:
-                        pixel = getPixel(node, gridSize=gridSize)
+                        pixel = geo.getPixel(node, gridSize=gridSize)
                         if pixel in nodes:
                             nodes[pixel].append(node)
                         else:
                             nodes[pixel] = [node]
 
-    pixel = getPixel(startPoint, gridSize=gridSize)
+    pixel = geo.getPixel(startPoint, gridSize=gridSize)
     if pixel in nodes:
         nodes[pixel].append(startPoint)
     else:
         nodes[pixel] = [startPoint]
 
-    pixel = getPixel(endPoint, gridSize=gridSize)
+    pixel = geo.getPixel(endPoint, gridSize=gridSize)
     if pixel in nodes:
         nodes[pixel].append(endPoint)
     else:
@@ -333,7 +174,7 @@ def generateNodes(startPoint, endPoint, walls, gridSize=10):
 def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.000001):
     first = wall1  # closest wall clockwise
     second = wall2  # closest wall counterclockwise
-    bisectorAngle = getBisectorAngle(first, second)  # the bisector line of the two walls
+    bisectorAngle = geo.getBisectorAngle(first, second)  # the bisector line of the two walls
 
     x1 = sharedPoint[0] + math.cos(bisectorAngle) * shift
     y1 = sharedPoint[1] + math.sin(bisectorAngle) * shift
@@ -345,7 +186,7 @@ def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.000001):
         for index, point in enumerate(wall):
             if point == sharedPoint:
                 wall = (sharedPoint, wall[index - 1])
-                angle = ang(insideLine, wall)
+                angle = geo.ang(insideLine, wall)
                 if angle < 0:
                     angle += math.pi * 2
                 angles[wall] = angle
@@ -368,7 +209,7 @@ def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.000001):
         for index, point in enumerate(wall):
             if point == sharedPoint:
                 wall = (sharedPoint, wall[index - 1])
-                angle = ang(insideLine, wall)
+                angle = geo.ang(insideLine, wall)
                 if angle < 0:
                     angle += math.pi * 2
                 angles[wall] = angle
@@ -383,47 +224,3 @@ def getNode(connectedWalls, sharedPoint, wall1, wall2,  shift=.000001):
         return point2
 
     return None
-
-def getBisectorAngle(line1, line2):
-    x1 = line1[0][0] - line1[1][0]
-    y1 = line1[0][1] - line1[1][1]
-    x2 = line2[0][0] - line2[1][0]
-    y2 = line2[0][1] - line2[1][1]
-
-    theta_1 = math.atan2(y1, x1)
-    theta_2 = math.atan2(y2, x2)
-
-    return (theta_1 + theta_2) / 2
-
-def ang(lineA, lineB):
-    x1 = lineA[1][0] - lineA[0][0]
-    y1 = lineA[1][1] - lineA[0][1]
-
-    x2 = lineB[1][0] - lineB[0][0]
-    y2 = lineB[1][1] - lineB[0][1]
-
-    detV = det((x1, y1), (x2, y2))
-    dotV = dot((x1, y1), (x2, y2))
-    return math.atan2(detV, dotV)
-
-def det(a, b):
-    return a[0] * b[1] - a[1] * b[0]
-
-def dot(vA, vB):
-    return vA[0] * vB[0] + vA[1] * vB[1]
-
-def ccw(a, b, c):
-    return (c[1] - a[1]) * (b[0] - a[0]) > (b[1] - a[1]) * (c[0] - a[0])
-
-def intersect(line1, line2):
-    a = line1[0]
-    b = line1[1]
-    c = line2[0]
-    d = line2[1]
-    return ccw(a,c,d) != ccw(b,c,d) and ccw(a,b,c) != ccw(a,b,d)
-
-def distanceP(point1, point2):
-    return distance(point1[0], point1[1], point2[0], point2[1])
-
-def distance(x1, y1, x2, y2):
-    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)

@@ -28,18 +28,6 @@ def lineToPoint(line, point):
         return dist
 
 
-def ang(lineA, lineB):
-    x1 = lineA[1][0] - lineA[0][0]
-    y1 = lineA[1][1] - lineA[0][1]
-
-    x2 = lineB[1][0] - lineB[0][0]
-    y2 = lineB[1][1] - lineB[0][1]
-
-    detV = det((x1, y1), (x2, y2))
-    dotV = dot((x1, y1), (x2, y2))
-    return math.atan2(detV, dotV)
-
-
 def getBisectorAngle(line1, line2):
     x1 = line1[0][0] - line1[1][0]
     y1 = line1[0][1] - line1[1][1]
@@ -52,12 +40,44 @@ def getBisectorAngle(line1, line2):
     return (theta_1 + theta_2) / 2
 
 
+def ang(lineA, lineB):
+    x1 = lineA[1][0] - lineA[0][0]
+    y1 = lineA[1][1] - lineA[0][1]
+
+    x2 = lineB[1][0] - lineB[0][0]
+    y2 = lineB[1][1] - lineB[0][1]
+
+    detV = det((x1, y1), (x2, y2))
+    dotV = dot((x1, y1), (x2, y2))
+    return math.atan2(detV, dotV)
+
+
 def det(a, b):
     return a[0] * b[1] - a[1] * b[0]
 
 
 def dot(vA, vB):
     return vA[0] * vB[0] + vA[1] * vB[1]
+
+
+def ccw(a, b, c):
+    return (c[1] - a[1]) * (b[0] - a[0]) > (b[1] - a[1]) * (c[0] - a[0])
+
+
+def intersect(line1, line2):
+    a = line1[0]
+    b = line1[1]
+    c = line2[0]
+    d = line2[1]
+    return ccw(a,c,d) != ccw(b,c,d) and ccw(a,b,c) != ccw(a,b,d)
+
+
+def distanceP(point1, point2):
+    return distance(point1[0], point1[1], point2[0], point2[1])
+
+
+def distance(x1, y1, x2, y2):
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
 
 def add(v1, v2):
@@ -167,14 +187,6 @@ def liesInTriangle(point, triangle):
     return alpha > 0 and beta > 0 and gamma > 0
 
 
-def distance(x1, y1, x2, y2):
-    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-
-
-def distanceP(point1, point2):
-    return distance(point1[0], point1[1], point2[0], point2[1])
-
-
 def segmentIntersection(line1, line2):
     xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
     ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
@@ -231,3 +243,193 @@ def nthOccurrence(n, element, list):
             seen += 1
             if seen == n:
                 return i
+
+
+def circleFlood(point, zones, gridSize=10, maxLayers=35):
+    start = (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
+    layer = 0
+    valid = {}
+    valid[start] = None
+    added = True
+    while added:
+        added = False
+        layer += 1
+        if layer > maxLayers:
+            return None
+        for i in range(-layer, layer + 1):
+            for j in range(-layer, layer + 1):
+                if abs(i) == layer or abs(j) == layer:
+                    square = (start[0] + i, start[1] + j)
+                    getRange = 10
+                    pixels = getLastBresenham(start, square, getRange=getRange)
+                    offLine = 0
+                    containsWall = 0
+                    for toCheck in pixels:
+                        if toCheck not in valid:
+                            offLine += 1
+                        elif valid[toCheck]:
+                            containsWall += 1
+                    if offLine == 0:
+                        if square in zones:
+                            added = True
+                            valid[square] = zones[square]
+                        elif containsWall == 0:
+                            added = True
+                            valid[square] = []
+    return valid
+
+
+def getPixel(point, gridSize=10):
+    return (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
+
+
+def getLastBresenham(start, end, getRange=5):
+    x1, y1 = start
+    x2, y2 = end
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # Determine how steep the line is
+    is_steep = abs(dy) > abs(dx)
+
+    # Rotate line
+    if is_steep:
+        x1, y1, x2, y2 = y1, x1, y2, x2
+
+    # Swap start and end points if necessary and store swap state
+    if x1 > x2:
+        x1, x2, y1, y2 = x2, x1, y2, y1
+
+    # Recalculate differentials
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # Calculate error
+    error = int(dx / 2.0)
+    ystep = 1 if y1 < y2 else -1
+
+    # Iterate over bounding box generating points between start and end
+    y = y1
+    points = []
+    for x in range(x1, x2 + 1):
+        coord = (y, x) if is_steep else (x, y)
+        points.append(coord)
+
+        error -= abs(dy)
+        if error < 0:
+            y += ystep
+            error += dx
+    if points[0] == end:
+        return points[1: 1 + getRange]
+    elif points[0] == start:
+        return points[-2 - getRange:-2]
+    raise Exception("could not find last")
+
+
+def switch_octant_to_zero(octant, x, y):
+   if octant == 0: return (x, y)
+   if octant == 1: return (y, x)
+   if octant == 2: return (y, -x)
+   if octant == 3: return (-x, y)
+   if octant == 4: return (-x, -y)
+   if octant == 5: return (-y, -x)
+   if octant == 6: return (-y, x)
+   if octant == 7: return (x, -y)
+
+
+def switch_octant_from_zero(octant, x, y):
+   if octant == 0: return (x, y)
+   if octant == 1: return (y, x)
+   if octant == 2: return (-y, x)
+   if octant == 3: return (-x, y)
+   if octant == 4: return (-x, -y)
+   if octant == 5: return (-y, -x)
+   if octant == 6: return (y, -x)
+   if octant == 7: return (x, -y)
+
+
+def get_octant(A, B):
+    dx, dy = B[0] - A[0], B[1] - A[1]
+    octant = 0
+    if dy < 0:
+        dx, dy = -dx, -dy  # rotate by 180 degrees
+        octant += 4
+    if dx < 0:
+        dx, dy = dy, -dx  # rotate clockwise by 90 degrees
+        octant += 2
+    if dx < dy:
+        # no need to rotate now
+        octant += 1
+    return octant
+
+
+def bresenham(point1, point2, gridSize=10):
+    x1, y1 = getPixel(point1, gridSize=gridSize)
+    x2, y2 = getPixel(point2, gridSize=gridSize)
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # Determine how steep the line is
+    is_steep = abs(dy) > abs(dx)
+
+    # Rotate line
+    if is_steep:
+        x1, y1 = y1, x1
+        x2, y2 = y2, x2
+
+    # Swap start and end points if necessary and store swap state
+    swapped = False
+    if x1 > x2:
+        x1, x2 = x2, x1
+        y1, y2 = y2, y1
+        swapped = True
+
+    # Recalculate differentials
+    dx = x2 - x1
+    dy = y2 - y1
+
+    # Calculate error
+    error = int(dx / 2.0)
+    ystep = 1 if y1 < y2 else -1
+
+    # Iterate over bounding box generating points between start and end
+    y = y1
+    points = []
+    for x in range(x1, x2 + 1):
+        coord = (y, x) if is_steep else (x, y)
+        points.append(coord)
+
+        error -= abs(dy)
+        if error < 0:
+            coord = (y, x + 1) if is_steep else (x + 1, y)
+            points.append(coord)
+            y += ystep
+            coord = (y, x) if is_steep else (x, y)
+            points.append(coord)
+            error += dx
+    return points
+
+
+def bresenhamCircle(center, radius, gridSize=10):
+    x0, y0 = (int(round(center[0] / gridSize)), int(round(center[1] / gridSize)))
+    x = radius
+    y = 0
+    err = 0
+    pixels = []
+    while x >= y:
+        pixels.append((x0 + x, y0 + y))
+        pixels.append((x0 + y, y0 + x))
+        pixels.append((x0 - y, y0 + x))
+        pixels.append((x0 - x, y0 + y))
+        pixels.append((x0 - x, y0 - y))
+        pixels.append((x0 - y, y0 - x))
+        pixels.append((x0 + y, y0 - x))
+        pixels.append((x0 + x, y0 - y))
+
+        if err <= 0:
+            y += 1
+            err += 2*y + 1
+        if err > 0:
+            x -= 1
+            err -= 2*x + 1
+    return pixels
