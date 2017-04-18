@@ -20,25 +20,25 @@ class Path:
 
         self.nodes[geo.getPixel(self.location)].remove(self.location)
 
-        #self.connected = sorted(self.nodes, key=lambda x: self.getPromisedLength(x))
         self.connected = self.getSeen()
         self.prepareNext()
 
     def add(self, gridSize=10):
-        if self.connected:
-            next = self.connected.pop(0)
-            self.prepareNext()
-            if next in self.nodes[geo.getPixel(next, gridSize=gridSize)]:
-                return Path(next, self, self.endPoint, self.nodes, self.walls, self.paths, self.zones)
+        next = self.connected.pop(0)
+        self.prepareNext()
+        if next in self.nodes[geo.getPixel(next, gridSize=gridSize)]:
+            return Path(next, self, self.endPoint, self.nodes, self.walls, self.paths, self.zones)
 
     def setPromisedLength(self):
-        if self.connected:
-            self.promisedLength = self.getPromisedLength(self.connected[0])
+        self.promisedLength = self.getPromisedLength(self.connected[0])
 
     def prepareNext(self):
         while self.connected and not self.valid(self.connected[0]):
             self.connected.pop(0)
-        self.setPromisedLength()
+        if self.connected:
+            self.setPromisedLength()
+        else:
+            self.paths.remove(self)
 
     def getPromisedLength(self, node):
         return self.length + geo.distanceP(node, self.endPoint) + geo.distanceP(node, self.location)

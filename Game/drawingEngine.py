@@ -25,7 +25,19 @@ class DrawingEngine(CanvasObject):
         self.showCircle((self.game.gameEngine.startPoint[0], self.game.gameEngine.startPoint[1]),
                         15, (0, 255, 0), shiftPosition=True)
 
-        valid = geo.circleFlood(self.game.gameEngine.endPoint, self.game.gameEngine.zones)
+        mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
+        if mouseX > self.game.window.width - self.game.gameEngine.indent - 1:
+            mouseX = self.game.window.width - self.game.gameEngine.indent - 1
+        if mouseX < self.game.gameEngine.indent + 1:
+            mouseX = self.game.gameEngine.indent + 1
+        mouseY = self.game.window.height - (
+        self.game.window.root.winfo_pointery() - self.game.window.root.winfo_rooty())
+        if mouseY > self.game.window.height - self.game.gameEngine.indent - 1:
+            mouseY = self.game.window.height - self.game.gameEngine.indent - 1
+        if mouseY < self.game.gameEngine.indent + 1:
+            mouseY = self.game.gameEngine.indent + 1
+
+        valid = geo.circleFlood((mouseX, mouseY), self.game.gameEngine.zones)
         if valid:
             for point, walls in valid.items():
                 if walls:
@@ -34,6 +46,11 @@ class DrawingEngine(CanvasObject):
                 else:
                     self.showRectangle((point[0] * 10 - 5, point[1] * 10 - 5), (point[0] * 10 + 5, point[1] * 10 + 5),
                                    (255, 0, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
+
+
+        for nodeList in self.game.gameEngine.nodes.values():
+            for node in nodeList:
+                self.showCircle((node[0], node[1]), 5, (0, 255, 0), shiftPosition=True)
 
 
         for wall in self.game.gameEngine.wallList:

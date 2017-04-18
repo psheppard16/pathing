@@ -245,7 +245,7 @@ def nthOccurrence(n, element, list):
                 return i
 
 
-def circleFlood(point, zones, gridSize=10, maxLayers=35):
+def circleFlood(point, walls, gridSize=10, maxLayers=35):
     start = (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
     layer = 0
     valid = {}
@@ -260,22 +260,22 @@ def circleFlood(point, zones, gridSize=10, maxLayers=35):
             for j in range(-layer, layer + 1):
                 if abs(i) == layer or abs(j) == layer:
                     square = (start[0] + i, start[1] + j)
-                    getRange = 10
-                    pixels = getLastBresenham(start, square, getRange=getRange)
+                    pixels = getLastBresenham(start, square, getRange=3)
                     offLine = 0
-                    containsWall = 0
+                    hitWalls = set()
                     for toCheck in pixels:
                         if toCheck not in valid:
                             offLine += 1
-                        elif valid[toCheck]:
-                            containsWall += 1
-                    if offLine == 0:
-                        if square in zones:
-                            added = True
-                            valid[square] = zones[square]
-                        elif containsWall == 0:
-                            added = True
+                        if toCheck in walls:
+                            for wall in walls[toCheck]:
+                                hitWalls.update(wall)
+                    if offLine == 1 and len(hitWalls) <= 8:
+                        added = True
+                        if square in walls:
+                            valid[square] = walls[square]
+                        else:
                             valid[square] = []
+
     return valid
 
 
@@ -319,11 +319,12 @@ def getLastBresenham(start, end, getRange=5):
         if error < 0:
             y += ystep
             error += dx
-    if points[0] == end:
-        return points[1: 1 + getRange]
-    elif points[0] == start:
-        return points[-2 - getRange:-2]
-    raise Exception("could not find last")
+    # if points[0] == end:
+    #     return points[1: 1 + getRange]
+    # elif points[0] == start:
+    #     return points[-2 - getRange:-2]
+    return points
+    #raise Exception("could not find last")
 
 
 def switch_octant_to_zero(octant, x, y):
