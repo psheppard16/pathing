@@ -52,13 +52,12 @@ class Path:
         return valid
 
     def getZoneWalls(self, node):
-        zoneWalls = []
+        zoneWalls = set()
         bPoints = geo.bresenham(self.location, node)
         for point in bPoints:
             if point in self.wallZones:
-                newWalls = self.wallZones[point]
-                zoneWalls = zoneWalls + list(set(newWalls) - set(zoneWalls))
-        return zoneWalls
+                zoneWalls.update(self.wallZones[point])
+        return list(zoneWalls)
 
     def getSeen(self):
         seenPixels = geo.circleFlood(self.location, self.wallZones)

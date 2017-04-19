@@ -93,7 +93,7 @@ def unit_vector(v):
     return v[0] / abs, v[1] / abs
 
 
-def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=3):
+def getSnapPoints(connectedWalls, sharedPoint, insidePoint, shift=.0001):
     if connectedWalls:
         angles = {}
         insideLine = (sharedPoint, insidePoint)
@@ -246,11 +246,24 @@ def nthOccurrence(n, element, list):
 
 
 def circleFlood(point, walls, maxLayers=35):
-    start = getPixel(point)
-    layer = 0
     valid = {}
-    valid[start] = None
+    centerPixel = getPixel(point)
+    centerWalls = []
+    if centerPixel in walls:
+        centerWalls = walls[centerPixel]
+
+    startPixels = []
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            pixel = add(centerPixel, (i, j))
+            startPixels.append(pixel)
+            if pixel in walls:
+                valid[pixel] = walls[pixel]
+            else:
+                valid[pixel] = []
+
     added = True
+    layer = 0
     while added:
         added = False
         layer += 1
@@ -259,27 +272,31 @@ def circleFlood(point, walls, maxLayers=35):
         for i in range(-layer, layer + 1):
             for j in range(-layer, layer + 1):
                 if abs(i) == layer or abs(j) == layer:
-                    square = (start[0] + i, start[1] + j)
-                    pixels = getLastBresenham(start, square)
-                    offLine = 0
-                    hitWalls = set()
-                    for toCheck in pixels:
-                        if toCheck not in valid:
-                            offLine += 1
-                        if toCheck in walls:
-                            for wall in walls[toCheck]:
-                                hitWalls.update(wall)
-                    if offLine == 1 and len(hitWalls) <= 8:
-                        added = True
-                        if square in walls:
-                            valid[square] = walls[square]
-                        else:
-                            valid[square] = []
-
+                    for startPixel in startPixels:
+                        offLine = 0
+                        hitWalls = set()
+                        endPixel = (centerPixel[0] + i, centerPixel[1] + j)
+                        pixels = getLastBresenham(startPixel, endPixel)
+                        for toCheck in pixels:
+                            if toCheck not in valid:
+                                offLine += 1
+                            if toCheck in walls:
+                                for wall in walls[toCheck]:
+                                    if wall not in centerWalls:
+                                        hitWalls.update(wall)
+                        if offLine == 0: #one pixel will be the endpoint, so that will never be on the line
+                            if endPixel in walls:
+                                valid[endPixel] = walls[endPixel]
+                                added = True
+                                break
+                            elif len(hitWalls) == 0:
+                                valid[endPixel] = []
+                                added = True
+                                break
     return valid
 
 
-def getPixel(point, gridSize=10):
+def getPixel(point, gridSize=35):
     return (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
 
 
@@ -319,12 +336,7 @@ def getLastBresenham(start, end):
         if error < 0:
             y += ystep
             error += dx
-    # if points[0] == end:
-    #     return points[1: 1 + getRange]
-    # elif points[0] == start:
-    #     return points[-2 - getRange:-2]
-    return points
-    #raise Exception("could not find last")
+    return points[1:-1]
 
 
 def switch_octant_to_zero(octant, x, y):
