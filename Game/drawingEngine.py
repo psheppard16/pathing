@@ -2,6 +2,7 @@ __author__ = 'Preston Sheppard'
 import Pathing.pathing as pathing
 import Pathing.geometry as geo
 from FrameWork.Display.canvasObject import CanvasObject
+import inspect
 import math
 try:
     import pygame
@@ -37,14 +38,16 @@ class DrawingEngine(CanvasObject):
         if mouseY < self.game.gameEngine.indent + 1:
             mouseY = self.game.gameEngine.indent + 1
 
+        sig = inspect.signature(geo.getPixel)
+        gridSize = sig.parameters['gridSize'].default
         valid = geo.circleFlood((mouseX, mouseY), self.game.gameEngine.zones)
         if valid:
             for point, walls in valid.items():
                 if walls:
-                    self.showRectangle((point[0] * 10 - 5, point[1] * 10 - 5), (point[0] * 10 + 5, point[1] * 10 + 5),
+                    self.showRectangle((point[0] * gridSize - gridSize * .5, point[1] * gridSize - gridSize * .5), (point[0] * gridSize + gridSize * .5, point[1] * gridSize + gridSize * .5),
                                    (0, 255, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
                 else:
-                    self.showRectangle((point[0] * 10 - 5, point[1] * 10 - 5), (point[0] * 10 + 5, point[1] * 10 + 5),
+                    self.showRectangle((point[0] * gridSize - gridSize * .5, point[1] * gridSize - gridSize * .5), (point[0] * gridSize + gridSize * .5, point[1] * gridSize + gridSize * .5),
                                    (255, 0, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
 
 

@@ -90,7 +90,6 @@ class GameEngine:
         self.times = []
 
         self.zones = {}
-        zoneSize = 100
         for wall in self.wallList:
             bPoints = geo.bresenham(wall[0], wall[1])
             for point in bPoints:
@@ -104,7 +103,7 @@ class GameEngine:
         self.fullPath = []
         self.nodes = pathing.generateNodes(self.startPoint, self.endPoint, self.wallList)
         self.paths = []
-        self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.wallList, self.paths, self.zones)])
+        self.paths.extend([Path(self.startPoint, None, self.endPoint, self.paths, self.nodes, self.zones)])
 
     def run(self):
         mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
@@ -141,7 +140,7 @@ class GameEngine:
 
                     self.nodes = pathing.generateNodes(self.startPoint, self.endPoint, self.wallList)
                     self.paths = []
-                    self.paths.extend([Path(self.startPoint, None, self.endPoint, self.nodes, self.wallList, self.paths, self.zones)])
+                    self.paths.extend([Path(self.startPoint, None, self.endPoint, self.paths, self.nodes, self.zones)])
                     break
         elif self.game.saveEngine.saveNumber == 1:
             startTime = self.game.frameRateEngine.getTime()

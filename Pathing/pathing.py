@@ -2,13 +2,12 @@ __author__ = 'Preston Sheppard'
 import math
 import Pathing.geometry as geo
 class Path:
-    def __init__(self, location, creator, endPoint, nodes, walls, paths, zones):
+    def __init__(self, location, creator, endPoint, paths, nodeZones, wallZones):
         self.location = location
         self.creator = creator
         self.endPoint = endPoint
-        self.nodes = nodes
-        self.walls = walls
-        self.zones = zones
+        self.nodeZones = nodeZones
+        self.wallZones = wallZones
         self.paths = paths
         self.children = []
         if self.creator:
@@ -18,16 +17,16 @@ class Path:
 
         self.paths.append(self)
 
-        self.nodes[geo.getPixel(self.location)].remove(self.location)
+        self.nodeZones[geo.getPixel(self.location)].remove(self.location)
 
         self.connected = self.getSeen()
         self.prepareNext()
 
-    def add(self, gridSize=10):
+    def add(self):
         next = self.connected.pop(0)
         self.prepareNext()
-        if next in self.nodes[geo.getPixel(next, gridSize=gridSize)]:
-            return Path(next, self, self.endPoint, self.nodes, self.walls, self.paths, self.zones)
+        if next in self.nodeZones[geo.getPixel(next)]:
+            return Path(next, self, self.endPoint, self.paths, self.nodeZones, self.wallZones)
 
     def setPromisedLength(self):
         self.promisedLength = self.getPromisedLength(self.connected[0])
@@ -56,22 +55,22 @@ class Path:
         zoneWalls = []
         bPoints = geo.bresenham(self.location, node)
         for point in bPoints:
-            if point in self.zones:
-                newWalls = self.zones[point]
+            if point in self.wallZones:
+                newWalls = self.wallZones[point]
                 zoneWalls = zoneWalls + list(set(newWalls) - set(zoneWalls))
         return zoneWalls
 
-    def getSeen(self, gridSize=10):
-        seenPixels = geo.circleFlood(self.location, self.zones, gridSize=gridSize)
+    def getSeen(self):
+        seenPixels = geo.circleFlood(self.location, self.wallZones)
         if seenPixels:
             seen = []
             for pixel in seenPixels:
-                if pixel in self.nodes:
-                    seen.extend(self.nodes[pixel])
+                if pixel in self.nodeZones:
+                    seen.extend(self.nodeZones[pixel])
             return sorted(seen, key=lambda x: self.getPromisedLength(x))
         else:
             allNodes = []
-            for list in self.nodes.values():
+            for list in self.nodeZones.values():
                 allNodes.extend(list)
             return sorted(allNodes, key=lambda x: self.getPromisedLength(x))
 
@@ -87,7 +86,7 @@ def findPath(startPoint, endPoint, wallList):
 
     nodes = generateNodes(startPoint, endPoint, wallList)
     paths = []
-    paths.append(Path(startPoint, None, endPoint, nodes, wallList, paths, zones))
+    paths.append(Path(startPoint, None, endPoint, paths, nodes, zones))
 
     finalPath = None
     while not finalPath:
@@ -116,7 +115,7 @@ def getPromisingPath(paths):
             shortest = path
     return shortest
 
-def generateNodes(startPoint, endPoint, walls, gridSize=10):
+def generateNodes(startPoint, endPoint, walls):
     nodes = {}
     sharedPoints = []
     for wall in walls:
@@ -144,26 +143,26 @@ def generateNodes(startPoint, endPoint, walls, gridSize=10):
                     if 0 < geo.ang(ordered[index + 1], ordered[index]) < math.pi:
                         node = getNode(ordered, sharedPoint, ordered[index + 1], ordered[index])
                         if node and node not in nodes:
-                            pixel = geo.getPixel(node, gridSize=gridSize)
+                            pixel = geo.getPixel(node)
                             if pixel in nodes:
                                 nodes[pixel].append(node)
                             else:
                                 nodes[pixel] = [node]
                     node = getNode(ordered, sharedPoint, ordered[index], ordered[index])
                     if node and node not in nodes:
-                        pixel = geo.getPixel(node, gridSize=gridSize)
+                        pixel = geo.getPixel(node)
                         if pixel in nodes:
                             nodes[pixel].append(node)
                         else:
                             nodes[pixel] = [node]
 
-    pixel = geo.getPixel(startPoint, gridSize=gridSize)
+    pixel = geo.getPixel(startPoint)
     if pixel in nodes:
         nodes[pixel].append(startPoint)
     else:
         nodes[pixel] = [startPoint]
 
-    pixel = geo.getPixel(endPoint, gridSize=gridSize)
+    pixel = geo.getPixel(endPoint)
     if pixel in nodes:
         nodes[pixel].append(endPoint)
     else:

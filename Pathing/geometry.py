@@ -245,8 +245,8 @@ def nthOccurrence(n, element, list):
                 return i
 
 
-def circleFlood(point, walls, gridSize=10, maxLayers=35):
-    start = (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
+def circleFlood(point, walls, maxLayers=35):
+    start = getPixel(point)
     layer = 0
     valid = {}
     valid[start] = None
@@ -260,7 +260,7 @@ def circleFlood(point, walls, gridSize=10, maxLayers=35):
             for j in range(-layer, layer + 1):
                 if abs(i) == layer or abs(j) == layer:
                     square = (start[0] + i, start[1] + j)
-                    pixels = getLastBresenham(start, square, getRange=3)
+                    pixels = getLastBresenham(start, square)
                     offLine = 0
                     hitWalls = set()
                     for toCheck in pixels:
@@ -283,7 +283,7 @@ def getPixel(point, gridSize=10):
     return (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
 
 
-def getLastBresenham(start, end, getRange=5):
+def getLastBresenham(start, end):
     x1, y1 = start
     x2, y2 = end
     dx = x2 - x1
@@ -364,9 +364,9 @@ def get_octant(A, B):
     return octant
 
 
-def bresenham(point1, point2, gridSize=10):
-    x1, y1 = getPixel(point1, gridSize=gridSize)
-    x2, y2 = getPixel(point2, gridSize=gridSize)
+def bresenham(point1, point2):
+    x1, y1 = getPixel(point1)
+    x2, y2 = getPixel(point2)
     dx = x2 - x1
     dy = y2 - y1
 
@@ -411,8 +411,8 @@ def bresenham(point1, point2, gridSize=10):
     return points
 
 
-def bresenhamCircle(center, radius, gridSize=10):
-    x0, y0 = (int(round(center[0] / gridSize)), int(round(center[1] / gridSize)))
+def bresenhamCircle(center, radius):
+    x0, y0 = getPixel(center)
     x = radius
     y = 0
     err = 0
