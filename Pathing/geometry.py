@@ -282,8 +282,8 @@ def circleFlood(point, walls, maxLayers=35):
                                 offLine += 1
                             if toCheck in walls:
                                 for wall in walls[toCheck]:
-                                    if wall not in centerWalls:
-                                        hitWalls.update(wall)
+                                    #if wall not in centerWalls:
+                                    hitWalls.update(wall)
                         if offLine == 0: #one pixel will be the endpoint, so that will never be on the line
                             if endPixel in walls:
                                 valid[endPixel] = walls[endPixel]
@@ -296,7 +296,7 @@ def circleFlood(point, walls, maxLayers=35):
     return valid
 
 
-def getPixel(point, gridSize=35):
+def getPixel(point, gridSize=10):
     return (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
 
 
