@@ -248,9 +248,6 @@ def nthOccurrence(n, element, list):
 def circleFlood(point, walls, maxLayers=35):
     valid = {}
     centerPixel = getPixel(point)
-    centerWalls = []
-    if centerPixel in walls:
-        centerWalls = walls[centerPixel]
 
     startPixels = []
     for i in range(-1, 2):
@@ -296,7 +293,7 @@ def circleFlood(point, walls, maxLayers=35):
     return valid
 
 
-def getPixel(point, gridSize=10):
+def getPixel(point, gridSize=35):
     return (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
 
 
