@@ -1,4 +1,5 @@
 import math
+import inspect
 
 
 def lineToPoint(line, point):
@@ -294,7 +295,7 @@ def circleFlood(point, walls, maxLayers=35):
 
 
 def getPixel(point, gridSize=35):
-    return (int(round(point[0] / gridSize)), int(round(point[1] / gridSize)))
+    return (int(point[0] / gridSize), int(point[1] / gridSize))
 
 
 def getLastBresenham(start, end):
@@ -336,40 +337,37 @@ def getLastBresenham(start, end):
     return points[1:-1]
 
 
-def switch_octant_to_zero(octant, x, y):
-   if octant == 0: return (x, y)
-   if octant == 1: return (y, x)
-   if octant == 2: return (y, -x)
-   if octant == 3: return (-x, y)
-   if octant == 4: return (-x, -y)
-   if octant == 5: return (-y, -x)
-   if octant == 6: return (-y, x)
-   if octant == 7: return (x, -y)
+def switch_octant_to_zero(octant, point):
+    x = point[0]
+    y = point[1]
+    if octant == 1: return (x, y)
+    if octant == 2: return (y, x)
+    if octant == 3: return (y, -x)
+    if octant == 4: return (-x, y)
+    if octant == 5: return (-x, -y)
+    if octant == 6: return (-y, -x)
+    if octant == 7: return (-y, x)
+    if octant == 8: return (x, -y)
+    raise Exception("not a valid octant")
 
 
-def switch_octant_from_zero(octant, x, y):
-   if octant == 0: return (x, y)
-   if octant == 1: return (y, x)
-   if octant == 2: return (-y, x)
-   if octant == 3: return (-x, y)
-   if octant == 4: return (-x, -y)
-   if octant == 5: return (-y, -x)
-   if octant == 6: return (y, -x)
-   if octant == 7: return (x, -y)
+def switch_octant_from_zero(octant, point):
+    x = point[0]
+    y = point[1]
+    if octant == 1: return (x, y)
+    if octant == 2: return (y, x)
+    if octant == 3: return (-y, x)
+    if octant == 4: return (-x, y)
+    if octant == 5: return (-x, -y)
+    if octant == 6: return (-y, -x)
+    if octant == 7: return (y, -x)
+    if octant == 8: return (x, -y)
+    raise Exception("not a valid octant")
 
 
 def get_octant(A, B):
-    dx, dy = B[0] - A[0], B[1] - A[1]
-    octant = 0
-    if dy < 0:
-        dx, dy = -dx, -dy  # rotate by 180 degrees
-        octant += 4
-    if dx < 0:
-        dx, dy = dy, -dx  # rotate clockwise by 90 degrees
-        octant += 2
-    if dx < dy:
-        # no need to rotate now
-        octant += 1
+    x, y = (B[0] - A[0]), (B[1] - A[1])
+    octant = [([1, 2], [8, 7]), ([4, 3], [5, 6])][x < 0][y < 0][abs(x) < abs(y)]
     return octant
 
 
@@ -379,17 +377,28 @@ def bresenham(point1, point2):
     dx = x2 - x1
     dy = y2 - y1
 
+    sig = inspect.signature(getPixel)
+    gridSize = sig.parameters['gridSize'].default
+    y1Error = point1[1] - y1 * gridSize
+    y2Error = point2[1] - y2 * gridSize
+    x1Error = point1[0] - x1 * gridSize
+    x2Error = point2[0] - x2 * gridSize
+
     # Determine how steep the line is
     is_steep = abs(dy) > abs(dx)
 
     # Rotate line
     if is_steep:
+        x1Error, y1Error = y1Error, x1Error
+        x2Error, y2Error = y2Error, x2Error
         x1, y1 = y1, x1
         x2, y2 = y2, x2
 
     # Swap start and end points if necessary and store swap state
     swapped = False
     if x1 > x2:
+        x1Error, x2Error = x2Error, x1Error
+        y1Error, y2Error = y2Error, y1Error
         x1, x2 = x2, x1
         y1, y2 = y2, y1
         swapped = True
@@ -405,19 +414,55 @@ def bresenham(point1, point2):
     # Iterate over bounding box generating points between start and end
     y = y1
     points = []
+    startError = y1Error
+    endError = y2Error
+    startShiftError = x1Error
+    endShiftError = x2Error
     for x in range(x1, x2 + 1):
         coord = (y, x) if is_steep else (x, y)
         points.append(coord)
 
         error -= abs(dy)
         if error < 0:
-            coord = (y, x + 1) if is_steep else (x + 1, y)
-            points.append(coord)
+            errorSlope = (endError - startError) / (x2 - x1 - startShiftError / gridSize + endShiftError / gridSize)
+            change = (x - x1 - startShiftError)
+            if startError + change * errorSlope > 0:
+                coord = (y, x + 1) if is_steep else (x + 1, y)
+                points.append(coord)
+            else:
+                coord = (y + ystep, x) if is_steep else (x, y + ystep)
+                points.append(coord)
             y += ystep
-            coord = (y, x) if is_steep else (x, y)
-            points.append(coord)
             error += dx
     return points
+
+
+def bresenham1(point1, point2):
+    octant = get_octant(point1, point2)
+    point1 = switch_octant_to_zero(octant, point1)
+    point2 = switch_octant_to_zero(octant, point2)
+    x1, y1 = getPixel(point1)
+    x2, y2 = getPixel(point2)
+    slope = (point2[1] - point1[1]) / (point2[0] - point1[0])
+    sig = inspect.signature(getPixel)
+    gridSize = sig.parameters['gridSize'].default
+    points = []
+    lastX = x1
+    for y in range(y1, y2 + 1):
+        x = (y * gridSize - point1[1]) / slope + point1[0]
+        xPixel = int(x / gridSize)
+        if xPixel <= x2:
+            points.append((xPixel, y))
+            points.append((xPixel, y + 1))
+            for x in range(lastX, xPixel + 1):
+                points.append((x, y))
+            lastX = xPixel
+        else:
+            for x in range(lastX + 1, x2 + 1):
+                points.append((x, y))
+            break
+    return [switch_octant_from_zero(octant, point) for point in points]
+
 
 
 def bresenhamCircle(center, radius):
