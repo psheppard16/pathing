@@ -26,30 +26,20 @@ class DrawingEngine(CanvasObject):
         self.showCircle((self.game.gameEngine.startPoint[0], self.game.gameEngine.startPoint[1]),
                         15, (0, 255, 0), shiftPosition=True)
 
-        # mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
-        # if mouseX > self.game.window.width - self.game.gameEngine.indent - 1:
-        #     mouseX = self.game.window.width - self.game.gameEngine.indent - 1
-        # if mouseX < self.game.gameEngine.indent + 1:
-        #     mouseX = self.game.gameEngine.indent + 1
-        # mouseY = self.game.window.height - (
-        # self.game.window.root.winfo_pointery() - self.game.window.root.winfo_rooty())
-        # if mouseY > self.game.window.height - self.game.gameEngine.indent - 1:
-        #     mouseY = self.game.window.height - self.game.gameEngine.indent - 1
-        # if mouseY < self.game.gameEngine.indent + 1:
-        #     mouseY = self.game.gameEngine.indent + 1
-        #
+        mouseX = self.game.window.root.winfo_pointerx() - self.game.window.root.winfo_rootx()
+        if mouseX > self.game.window.width - self.game.gameEngine.indent - 1:
+            mouseX = self.game.window.width - self.game.gameEngine.indent - 1
+        if mouseX < self.game.gameEngine.indent + 1:
+            mouseX = self.game.gameEngine.indent + 1
+        mouseY = self.game.window.height - (
+        self.game.window.root.winfo_pointery() - self.game.window.root.winfo_rooty())
+        if mouseY > self.game.window.height - self.game.gameEngine.indent - 1:
+            mouseY = self.game.window.height - self.game.gameEngine.indent - 1
+        if mouseY < self.game.gameEngine.indent + 1:
+            mouseY = self.game.gameEngine.indent + 1
+
         sig = inspect.signature(geo.getPixel)
         gridSize = sig.parameters['gridSize'].default
-        # valid = geo.circleFlood((mouseX, mouseY), self.game.gameEngine.zones)
-        # if valid:
-        #     for point, walls in valid.items():
-        #         if walls:
-        #             self.showRectangle((point[0] * gridSize, point[1] * gridSize), (point[0] * gridSize, point[1] * gridSize),
-        #                            (0, 255, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
-        #         else:
-        #             self.showRectangle((point[0] * gridSize, point[1] * gridSize), (point[0] * gridSize, point[1] * gridSize),
-        #                            (255, 0, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
-
 
         for nodeList in self.game.gameEngine.nodes.values():
             for node in nodeList:
@@ -64,17 +54,23 @@ class DrawingEngine(CanvasObject):
                 self.showLine(path.location, path.creator.location, (255, 165, 0), 6, shiftPosition=True)
 
         for index in range(0, len(self.game.gameEngine.fullPath) - 1):
-            bres = geo.bresenham1(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1])
+            bres = geo.bresenham(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1])
             for point in bres:
                 self.showRectangle((point[0] * gridSize, point[1] * gridSize),
                                     ((point[0] + 1) * gridSize, (point[1] + 1) * gridSize),
                                     (0, 255, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
-        # for index in range(0, len(self.game.gameEngine.fullPath) - 1):
-        #     bres = geo.getLastBresenham(geo.getPixel(self.game.gameEngine.fullPath[index]), geo.getPixel(self.game.gameEngine.fullPath[index + 1]))
-        #     for point in bres:
-        #         self.showRectangle((point[0] * gridSize, point[1] * gridSize),
-        #                            ((point[0] + 1) * gridSize, (point[1] + 1) * gridSize),
-        #                            (0, 165, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
+
+        valid = geo.circleFlood((mouseX, mouseY), self.game.gameEngine.zones)
+        if valid:
+            for point, walls in valid.items():
+                if walls:
+                    self.showRectangle((point[0] * gridSize, point[1] * gridSize),
+                                       ((point[0] + 1) * gridSize, (point[1] + 1) * gridSize),
+                                       (0, 255, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
+                else:
+                    self.showRectangle((point[0] * gridSize, point[1] * gridSize),
+                                       ((point[0] + 1) * gridSize, (point[1] + 1) * gridSize),
+                                       (255, 0, 0), shiftPosition=True, secondaryColor=(0, 0, 0), width=2)
 
         for index in range(0, len(self.game.gameEngine.fullPath) - 1):
             self.showLine(self.game.gameEngine.fullPath[index], self.game.gameEngine.fullPath[index + 1], (255, 255, 0), 6, shiftPosition=True)

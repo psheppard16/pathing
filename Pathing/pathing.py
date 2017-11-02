@@ -60,8 +60,8 @@ class Path:
         return list(zoneWalls)
 
     def getSeen(self):
-        #seenPixels = geo.circleFlood(self.location, self.wallZones)
-        if False: #seenPixels:
+        seenPixels = geo.circleFlood(self.location, self.wallZones)
+        if seenPixels:
             seen = []
             for pixel in seenPixels:
                 if pixel in self.nodeZones:

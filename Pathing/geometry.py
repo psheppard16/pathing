@@ -246,95 +246,65 @@ def nthOccurrence(n, element, list):
                 return i
 
 
-def circleFlood(point, walls, maxLayers=35):
+def circleFlood(point, walls, maxLayers=15):
     valid = {}
     centerPixel = getPixel(point)
 
-    startPixels = []
-    for i in range(-1, 2):
-        for j in range(-1, 2):
-            pixel = add(centerPixel, (i, j))
-            startPixels.append(pixel)
-            if pixel in walls:
-                valid[pixel] = walls[pixel]
-            else:
-                valid[pixel] = []
+    if centerPixel in walls:
+        valid[centerPixel] = walls[centerPixel]
+    else:
+        valid[centerPixel] = []
+
+    sig = inspect.signature(getPixel)
+    gridSize = sig.parameters['gridSize'].default
+
+    def getEdges(center, layer):
+        edge = []
+        for i in range(-layer, layer + 1):
+            edge.append((center[0] + i, center[1] - layer))
+            edge.append((center[0] + i, center[1] + layer))
+        for j in range(-layer + 1, layer):
+            edge.append((center[0] - layer, center[1] + j))
+            edge.append((center[0] + layer, center[1] + j))
+        return edge
 
     added = True
-    layer = 0
+    layer = 1
     while added:
         added = False
-        layer += 1
         if layer > maxLayers:
             return None
-        for i in range(-layer, layer + 1):
-            for j in range(-layer, layer + 1):
-                if abs(i) == layer or abs(j) == layer:
-                    for startPixel in startPixels:
-                        offLine = 0
-                        hitWalls = set()
-                        endPixel = (centerPixel[0] + i, centerPixel[1] + j)
-                        pixels = getLastBresenham(startPixel, endPixel)
-                        for toCheck in pixels:
-                            if toCheck not in valid:
-                                offLine += 1
-                            if toCheck in walls:
-                                for wall in walls[toCheck]:
-                                    #if wall not in centerWalls:
+        edge = getEdges(centerPixel, layer)
+        for endPixel in edge:
+            offLine = 0
+            hitWalls = set()
+            wallSquares = 0
+            endPoint = ((endPixel[0] + .5) * gridSize, (endPixel[1] + .5) * gridSize)
+            pixels = bresenham(point, endPoint)
+            for toCheck in pixels:
+                if toCheck not in edge:
+                    if toCheck not in valid:
+                        offLine += 1
+                    if toCheck in walls:
+                        for wall in walls[toCheck]:
+                            if centerPixel in walls:
+                                if wall not in walls[centerPixel]:
                                     hitWalls.update(wall)
-                        if offLine == 0: #one pixel will be the endpoint, so that will never be on the line
-                            if endPixel in walls:
-                                valid[endPixel] = walls[endPixel]
-                                added = True
-                                break
-                            elif len(hitWalls) == 0:
-                                valid[endPixel] = []
-                                added = True
-                                break
+                            else:
+                                hitWalls.update(wall)
+            if offLine <= 1 :
+                if endPixel in walls:
+                    valid[endPixel] = walls[endPixel]
+                    added = True
+                elif len(hitWalls) <= 1:
+                    valid[endPixel] = []
+                    added = True
+        layer += 1
     return valid
 
 
-def getPixel(point, gridSize=35):
+def getPixel(point, gridSize=13):
     return (int(point[0] / gridSize), int(point[1] / gridSize))
-
-
-def getLastBresenham(start, end):
-    x1, y1 = start
-    x2, y2 = end
-    dx = x2 - x1
-    dy = y2 - y1
-
-    # Determine how steep the line is
-    is_steep = abs(dy) > abs(dx)
-
-    # Rotate line
-    if is_steep:
-        x1, y1, x2, y2 = y1, x1, y2, x2
-
-    # Swap start and end points if necessary and store swap state
-    if x1 > x2:
-        x1, x2, y1, y2 = x2, x1, y2, y1
-
-    # Recalculate differentials
-    dx = x2 - x1
-    dy = y2 - y1
-
-    # Calculate error
-    error = int(dx / 2.0)
-    ystep = 1 if y1 < y2 else -1
-
-    # Iterate over bounding box generating points between start and end
-    y = y1
-    points = []
-    for x in range(x1, x2 + 1):
-        coord = (y, x) if is_steep else (x, y)
-        points.append(coord)
-
-        error -= abs(dy)
-        if error < 0:
-            y += ystep
-            error += dx
-    return points[1:-1]
 
 
 def switch_octant_to_zero(octant, point):
@@ -371,7 +341,7 @@ def get_octant(A, B):
     return octant
 
 
-def bresenham(point1, point2):
+def bresenhamOld(point1, point2):
     x1, y1 = getPixel(point1)
     x2, y2 = getPixel(point2)
     dx = x2 - x1
@@ -437,10 +407,11 @@ def bresenham(point1, point2):
     return points
 
 
-def bresenham1(point1, point2):
+def bresenham(point1, point2):
     octant = get_octant(point1, point2)
     point1 = switch_octant_to_zero(octant, point1)
     point2 = switch_octant_to_zero(octant, point2)
+    shift = switch_octant_to_zero(octant, (.5, .5))
     x1, y1 = getPixel(point1)
     x2, y2 = getPixel(point2)
     slope = (point2[1] - point1[1]) / (point2[0] - point1[0])
@@ -448,21 +419,16 @@ def bresenham1(point1, point2):
     gridSize = sig.parameters['gridSize'].default
     points = []
     lastX = x1
-    for y in range(y1, y2 + 1):
+    for y in range(y1 + int(.5 + shift[1]), y2 + int(.5 + shift[1])):
         x = (y * gridSize - point1[1]) / slope + point1[0]
         xPixel = int(x / gridSize)
-        if xPixel <= x2:
-            points.append((xPixel, y))
-            points.append((xPixel, y + 1))
-            for x in range(lastX, xPixel + 1):
-                points.append((x, y))
-            lastX = xPixel
-        else:
-            for x in range(lastX + 1, x2 + 1):
-                points.append((x, y))
-            break
+        points.append((xPixel, y - int(.5 + shift[1])))
+        for x in range(lastX, xPixel):
+            points.append((x, y - int(.5 + shift[1])))
+        lastX = xPixel
+    for x in range(lastX, x2 + 1):
+        points.append((x, y2))
     return [switch_octant_from_zero(octant, point) for point in points]
-
 
 
 def bresenhamCircle(center, radius):
